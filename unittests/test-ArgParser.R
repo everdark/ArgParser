@@ -119,3 +119,26 @@ test_that("follow-by values for switches are ignored", {
           expect_identical(parseCommandLine(argParser3, cmdargs19), list(`--s1`=FALSE, `--s2`=TRUE))
 })
 
+#-----------------------#
+# test for forced flags #
+#-----------------------#
+
+argParser4 <- ArgParser() %>%
+    addFlag("--f1", default="f1_default") %>%
+    addFlag("--f2", optional=FALSE) %>%
+    addFlag("--f3", optional=FALSE, default="f3_default")
+
+cmdargs22 <- getTestInput("prog.R --f1")
+cmdargs23 <- getTestInput("prog.R --f2")
+
+test_that("forced flag not raised will cause error", {
+          expect_error(parseCommandLine(argParser4, cmdargs22))
+          expect_error(parseCommandLine(argParser4, cmdargs23))
+})
+
+cmdargs24 <- getTestInput("prog.R --f2 v2 --f3 --f2 v20")
+
+test_that("duplicated forced flags are ignored, only the first matched remains", {
+          expect_identical(parseCommandLine(argParser4, cmdargs24), list(`--f2`="v2", `--f3`="f3_default"))
+})
+
