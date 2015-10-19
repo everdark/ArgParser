@@ -3,19 +3,22 @@ ArgParser <- setClass("ArgParser",
                       slots=c(cmdargs="character", 
                               flags="character",
                               flagsd="character",
+                              flagso="logical",
                               switches="character",
                               switchesd="logical",
                               opt="character"))
 
-setGeneric("addFlag", def=function(x, f, default) standardGeneric("addFlag"))
+setGeneric("addFlag", def=function(x, f, default, ...) standardGeneric("addFlag"))
 setMethod("addFlag", signature=c(x="ArgParser", f="character", default="missing"), 
-          definition=function(x, f) {
+          definition=function(x, f, optional=TRUE) {
               x@flags <- c(x@flags, f)
+              x@flagso <- c(x@flagso, setNames(optional, f))
               x
           })
 setMethod("addFlag", signature=c(x="ArgParser", f="character", default="ANY"), 
-          definition=function(x, f, default) {
+          definition=function(x, f, default, optional=TRUE) {
               x@flags <- c(x@flags, f)
+              x@flagso <- c(x@flagso, setNames(optional, f))
               x@flagsd <- c(x@flagsd, setNames(default, f))
               x
           })
@@ -50,7 +53,7 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
                   parsed <- c(parsed, setNames(cmdargs[f1_idx + 1L], f1_raised))
                   invalid_value <- parsed %in% c(all_argnames, NA)
                   if ( any(invalid_value) )
-                      stop(sprintf("Invalid input in: %s", 
+                      stop(sprintf("Invalid input in: %s.", 
                                    paste(names(parsed[invalid_value]), collapse=', ')))
               }
               f2 <- x@flags[with_default]
