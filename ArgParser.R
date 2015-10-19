@@ -45,6 +45,13 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
               parsed <- list()
               all_argnames <- c(x@flags, names(x@flagsd), x@switches)
 
+              ## check forced flags
+              forced_flags <- names(x@flagso)[!unlist(x@flagso)]
+              forced_and_raised <- forced_flags %in% cmdargs
+              if ( !all(forced_and_raised) )
+                  stop(sprintf("Missing forced flag(s): %s", 
+                               paste(forced_flags[!forced_and_raised], collapse=", ")))
+
               ## parse flags ##
               with_default <- x@flags %in% names(x@flagsd)
               f1 <- x@flags[!with_default]
@@ -54,7 +61,7 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
                   invalid_value <- parsed %in% c(all_argnames, NA)
                   if ( any(invalid_value) )
                       stop(sprintf("Invalid input in: %s.", 
-                                   paste(names(parsed[invalid_value]), collapse=', ')))
+                                   paste(names(parsed[invalid_value]), collapse=", ")))
               }
               f2 <- x@flags[with_default]
               if ( length(f2_raised <- f2[f2 %in% cmdargs]) ) {
