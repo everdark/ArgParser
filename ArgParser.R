@@ -27,7 +27,9 @@ setMethod("addFlag", signature=c(x="ArgParser", f="character", default="missing"
           })
 setMethod("addFlag", signature=c(x="ArgParser", f="character", default="ANY"), 
           definition=function(x, f, default, optional=TRUE) {
-              x@flags <- c(x@flags, setNames(default, f))
+              if ( length(default) > 1 )
+                  warning("Data for default is more than one, only keep the first.")
+              x@flags <- c(x@flags, setNames(default[1], f))
               x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, f))
               validObject(x)
               x
