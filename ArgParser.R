@@ -63,6 +63,12 @@ setMethod("addOpt", signature=c(x="ArgParser", opt="character"),
 setGeneric("parseCommandLine", def=function(x, cmdargs) standardGeneric("parseCommandLine"))
 setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"), 
           definition=function(x, cmdargs) {
+
+              ## print usage then exit if --help is raised
+              if ( any(c("--help", "-h") %in% cmdargs) ) {
+                  write("print this usage", stdout())
+                  quit(status=0)
+              }
               
               parsed <- list()
               all_argnames <- c(names(x@flags), names(x@switches_logic), names(x@switches_any))
@@ -104,7 +110,7 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
                   parsed[pushed_switches_logic] <- !x@switches_logic[pushed_switches_logic]
               }
 
-              # parse positional args (opt)
+              ## parse positional args (opt)
 
               parsed
           })
