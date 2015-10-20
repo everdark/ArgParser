@@ -1,12 +1,17 @@
 
 ArgParser <- setClass("ArgParser", 
-                      slots=c(cmdargs="character", 
-                              flags="character",
+                      slots=c(flags="character",
                               flagsd="character",
                               flagso="logical",
                               switches="character",
                               switchesd="logical",
-                              opt="character"))
+                              opt="character"),
+                      prototype=list(switches="--help"),
+                      validity=function(object) {
+                          if ( any(sapply(object@switches, function(x) substr(x,1,2) != "--")) )
+                              return("Name of flags/switches should be prefixed with --.")
+                          TRUE
+                      })
 
 setGeneric("addFlag", def=function(x, f, default, ...) standardGeneric("addFlag"))
 setMethod("addFlag", signature=c(x="ArgParser", f="character", default="missing"), 
@@ -28,6 +33,7 @@ setMethod("addSwitch", signature=c(x="ArgParser", s="character", default="logica
           definition=function(x, s, default=FALSE) {
               x@switches <- c(x@switches, s)
               x@switchesd <- c(x@switchesd, setNames(default, s))
+              validObject(x)
               x
           })
 
