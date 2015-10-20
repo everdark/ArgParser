@@ -1,4 +1,7 @@
 
+#---------------------#
+# define parser class #
+#---------------------#
 ArgParser <- setClass("ArgParser", 
                       slots=c(flags="list",
                               flags_isOptional="logical",
@@ -17,6 +20,9 @@ ArgParser <- setClass("ArgParser",
                           TRUE
                       })
 
+#-----------------------------------#
+# define methods for argument adder #
+#-----------------------------------#
 setGeneric("addFlag", def=function(x, f, default, ...) standardGeneric("addFlag"))
 setMethod("addFlag", signature=c(x="ArgParser", f="character", default="missing"), 
           definition=function(x, f, optional=TRUE) {
@@ -60,6 +66,75 @@ setMethod("addOpt", signature=c(x="ArgParser", opt="character"),
               x
           })
 
+#------------------------------------#
+# define methods for argument parser #
+#------------------------------------#
+setGeneric(".parseFlag", def=function(x, cmdargs) standardGeneric(".parseFlag"))
+setMethod(".parseFlag", signature=c(x="ArgParser", cmdargs="character"),
+          definition=function(x, cmdargs) {
+              
+              parsed <- list()
+              allargs <- c(names(x@flags), names(x@switches_logic), names(x@switches_any))
+              
+              if ( length(x@flags) ) {
+                  with_default <- sapply(x@flags, function(x) !is.na(x))
+
+                  # parse flags without default value
+                  f1 <- names(x@flags[!with_default])
+                  if ( length(f1_raised <- f1[f1 %in% cmdargs]) ) {
+                      f1_idx <- match(f1_raised, cmdargs)
+                      parsed <- c(parsed, setNames(cmdargs[f1_idx + 1L], f1_raised))
+                      invalid_value <- parsed %in% c(allargs, NA)
+                      if ( any(invalid_value) )
+                          stop(sprintf("Invalid input in: %s.", 
+                                       paste(names(parsed[invalid_value]), collapse=", ")))
+                  }
+
+                  # parse flags with default value
+                  f2 <- names(x@flags[with_default])
+                  if ( length(f2_raised <- f2[f2 %in% cmdargs]) ) {
+                      f2_idx <- match(f2_raised, cmdargs)
+                      parsed <- c(parsed, x@flags[f2_raised])
+                      f2_value <- setNames(cmdargs[f2_idx + 1L], f2_raised)
+                      not_a_value <- f2_value %in% c(allargs, NA)
+                      f2_overwrite_value <- f2_value[!not_a_value]
+                      parsed[names(f2_overwrite_value)] <- f2_overwrite_value
+                  }
+              }
+              parsed
+          })
+
+setGeneric(".parseSwitch", def=function(x, cmdargs) standardGeneric(".parseSwitch"))
+setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
+          definition=function(x, cmdargs) {
+
+              parsed <- list()
+              
+              # parse logical switches
+              parsed <- c(parsed, x@switches_logic)
+              if ( any(pushed <- names(x@switches_logic) %in% cmdargs) ) {
+                  pushed_switches_logic <- names(x@switches_logic)[pushed]
+                  parsed[pushed_switches_logic] <- !x@switches_logic[pushed_switches_logic]
+              }
+
+              # parse ad-hoc switches pushed
+              if ( any(pushed <- names(x@switches_any) %in% cmdargs) )
+                  parsed <- c(parsed, sapply(x@switches_any[pushed], function(x) x[[2]]))
+
+              # parse ad-hoc switches not pushed
+              if ( any(unpushed <- !names(x@switches_any) %in% cmdargs) )
+                  parsed <- c(parsed, sapply(x@switches_any[unpushed], function(x) x[[1]]))
+              
+              parsed
+          })
+
+setGeneric(".parseOpt", def=function(x, cmdargs) standardGeneric(".parseOpt"))
+setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs="character"),
+          definition=function(x, cmdargs) {
+              parsed <- list()
+              parsed
+          })
+
 setGeneric("parseCommandLine", def=function(x, cmdargs) standardGeneric("parseCommandLine"))
 setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"), 
           definition=function(x, cmdargs) {
@@ -81,40 +156,16 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
               }
 
               ## parse flags
-              if ( length(x@flags) ) {
-                  with_default <- sapply(x@flags, function(x) !is.na(x))
-                  f1 <- names(x@flags[!with_default])
-                  if ( length(f1_raised <- f1[f1 %in% cmdargs]) ) {
-                      f1_idx <- match(f1_raised, cmdargs)
-                      parsed <- c(parsed, setNames(cmdargs[f1_idx + 1L], f1_raised))
-                      invalid_value <- parsed %in% c(all_argnames, NA)
-                      if ( any(invalid_value) )
-                          stop(sprintf("Invalid input in: %s.", 
-                                       paste(names(parsed[invalid_value]), collapse=", ")))
-                  }
-                  f2 <- names(x@flags[with_default])
-                  if ( length(f2_raised <- f2[f2 %in% cmdargs]) ) {
-                      f2_idx <- match(f2_raised, cmdargs)
-                      parsed <- c(parsed, x@flags[f2_raised])
-                      f2_value <- setNames(cmdargs[f2_idx + 1L], f2_raised)
-                      not_a_value <- f2_value %in% c(all_argnames, NA)
-                      f2_overwrite_value <- f2_value[!not_a_value]
-                      parsed[names(f2_overwrite_value)] <- f2_overwrite_value
-                  }
-              }
+              parsed_flags <- .parseFlag(x=x, cmdargs=cmdargs)
+              parsed <- c(parsed, parsed_flags)
 
               ## parse switches
-              parsed <- c(parsed, x@switches_logic)
-              if ( any(pushed <- names(x@switches_logic) %in% cmdargs) ) {
-                  pushed_switches_logic <- names(x@switches_logic)[pushed]
-                  parsed[pushed_switches_logic] <- !x@switches_logic[pushed_switches_logic]
-              }
-              if ( any(pushed <- names(x@switches_any) %in% cmdargs) )
-                  parsed <- c(parsed, sapply(x@switches_any[pushed], function(x) x[[2]]))
-              if ( any(unpushed <- !names(x@switches_any) %in% cmdargs) )
-                  parsed <- c(parsed, sapply(x@switches_any[unpushed], function(x) x[[1]]))
+              parsed_switches <- .parseSwitch(x=x, cmdargs=cmdargs)
+              parsed <- c(parsed, parsed_switches)
 
-              # parse positional args (opt)
+              ## parse positional args (opt)
+              parsed_opt <- .parseOpt(x=x, cmdargs=cmdargs)
+              parsed <- c(parsed, parsed_opt)
 
               parsed
           })
