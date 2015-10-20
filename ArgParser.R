@@ -9,7 +9,9 @@ ArgParser <- setClass("ArgParser",
                       prototype=list(switches="--help"),
                       validity=function(object) {
                           if ( any(sapply(object@switches, function(x) substr(x,1,2) != "--")) )
-                              return("Name of flags/switches should be prefixed with --.")
+                              return("Name of flags/switches should have double-dash (--) prefix.")
+                          if ( any(sapply(object@flags, function(x) substr(x,1,2) != "--")) )
+                              return("Name of flags/switches should have double-dash (--) prefix.")
                           TRUE
                       })
 
