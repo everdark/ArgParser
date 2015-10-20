@@ -20,8 +20,9 @@ for ( arg in names(pargs) )
 + Then run:
 ```
 $ ./test.R --f1 v1 --f2 v2 --s1
---f1 v1 
---f2 v2 
---help FALSE 
---s1 TRUE 
+--f1 v1     
+--f2 v2     
+--help FALSE    
+--s1 TRUE   
+--s2 1  
 ```
