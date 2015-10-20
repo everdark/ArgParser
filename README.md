@@ -1,7 +1,7 @@
 # ArgParser
 command line argument parser for R, implemented in S4
 
-[Example Use]
+## Example Use
 + Declare the parser in `test.R` as the following:
 ```
 #!/usr/bin/env Rscript
