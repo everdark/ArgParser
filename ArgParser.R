@@ -109,8 +109,12 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
                   pushed_switches_logic <- names(x@switches_logic)[pushed]
                   parsed[pushed_switches_logic] <- !x@switches_logic[pushed_switches_logic]
               }
+              if ( any(pushed <- names(x@switches_any) %in% cmdargs) )
+                  parsed <- c(parsed, sapply(x@switches_any[pushed], function(x) x[[2]]))
+              if ( any(unpushed <- !names(x@switches_any) %in% cmdargs) )
+                  parsed <- c(parsed, sapply(x@switches_any[unpushed], function(x) x[[1]]))
 
-              ## parse positional args (opt)
+              # parse positional args (opt)
 
               parsed
           })
