@@ -3,7 +3,7 @@ command line argument parser for R, implemented in S4
 
 ## Example Use
 + Declare the parser in `test.R` as the following:
-```
+```R
 #!/usr/bin/env Rscript
 
 library(methods)
