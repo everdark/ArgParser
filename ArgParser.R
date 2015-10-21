@@ -7,8 +7,10 @@ ArgParser <- setClass("ArgParser",
                               flags_isOptional="logical",
                               switches_logic="logical",
                               switches_any="list",
-                              opt="character"),
-                      prototype=list(switches_logic=c(`--help`=FALSE)),
+                              opt="character",
+                              usage="character"),
+                      prototype=list(switches_logic=c(`--help`=FALSE),
+                                     usage=c(`--help`="show this message and exit.")),
                       validity=function(object) {
                           all_argnames <- c(names(object@switches_logic), 
                                             names(object@switches_any), 
@@ -25,43 +27,53 @@ ArgParser <- setClass("ArgParser",
 #-----------------------------------#
 setGeneric("addFlag", def=function(x, f, default, ...) standardGeneric("addFlag"))
 setMethod("addFlag", signature=c(x="ArgParser", f="character", default="missing"), 
-          definition=function(x, f, optional=TRUE) {
+          definition=function(x, f, optional=TRUE, help=NULL) {
               x@flags <- c(x@flags, setNames(NA, f))
               x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, f))
+              if ( !is.null(help) )
+                  x@help <- c(x@help, setNames(help, f))
               validObject(x)
               x
           })
 setMethod("addFlag", signature=c(x="ArgParser", f="character", default="ANY"), 
-          definition=function(x, f, default, optional=TRUE) {
+          definition=function(x, f, default, optional=TRUE, help=NULL) {
               if ( length(default) > 1 )
                   warning("Data for default is more than one, only keep the first.")
               x@flags <- c(x@flags, setNames(default[1], f))
               x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, f))
+              if ( !is.null(help) )
+                  x@help <- c(x@help, setNames(help, f))
               validObject(x)
               x
           })
 
-setGeneric("addSwitch", def=function(x, s, default) standardGeneric("addSwitch"))
+setGeneric("addSwitch", def=function(x, s, default, ...) standardGeneric("addSwitch"))
 setMethod("addSwitch", signature=c(x="ArgParser", s="character", default="logical"), 
-          definition=function(x, s, default=FALSE) {
+          definition=function(x, s, default=FALSE, help=NULL) {
               x@switches_logic <- c(x@switches_logic, setNames(default, s))
+              if ( !is.null(help) )
+                  x@help <- c(x@help, setNames(help, s))
               validObject(x)
               x
           })
 setMethod("addSwitch", signature=c(x="ArgParser", s="character", default="list"), 
-          definition=function(x, s, default) {
+          definition=function(x, s, default, help=NULL) {
               if ( length(default) < 2 )
                   stop("The default, if a list, must be supplied both unpushed/pushed states, in order.")
               names(default) <- c("unpushed", "pushed")
-              x@switches_any <- c(x@switches_any, setNames(list(default), s))
+              x@switches_any <- c(x@switaches_any, setNames(list(default), s))
+              if ( !is.null(help) )
+                  x@help <- c(x@help, setNames(help, s))
               validObject(x)
               x
           })
 
-setGeneric("addOpt", def=function(x, opt) standardGeneric("addOpt"))
-setMethod("addOpt", signature=c(x="ArgParser", opt="character"), 
+setGeneric("addOpt", def=function(x, opt, ...) standardGeneric("addOpt"))
+setMethod("addOpt", signature=c(x="ArgParser", opt="character", help=NULL), 
           definition=function(x, opt) {
               x@opt <- c(x@opt, opt)
+              if ( !is.null(help) )
+                  x@help <- c(x@help, setNames(help, opt))
               validObject(x)
               x
           })
