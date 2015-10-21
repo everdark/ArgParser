@@ -3,16 +3,18 @@
 # define parser class #
 #---------------------#
 ArgParser <- setClass("ArgParser", 
-                      slots=c(flags="list",
+                      slots=c(desc="character",
+                              flags="list",
                               flags_alias="character",
                               flags_isOptional="logical",
                               switches_logic="logical",
                               switches_any="list",
                               switches_alias="character",
                               opt="character",
-                              usage="character"),
-                      prototype=list(switches_logic=c(`--help`=FALSE),
-                                     usage=c(`--help`="show this message and exit."),
+                              help="character"),
+                      prototype=list(desc='',
+                                     switches_logic=c(`--help`=FALSE),
+                                     help=c(`--help`="show this message and exit"),
                                      flags_alias=c(`--help`="-h")),
                       validity=function(object) {
                           all_argnames <- c(names(object@switches_logic), 
@@ -64,7 +66,7 @@ setMethod("addSwitch", signature=c(x="ArgParser", s="character", default="list")
               if ( length(default) < 2 )
                   stop("The default, if a list, must be supplied both unpushed/pushed states, in order.")
               names(default) <- c("unpushed", "pushed")
-              x@switches_any <- c(x@switaches_any, setNames(list(default), s))
+              x@switches_any <- c(x@switches_any, setNames(list(default), s))
               if ( !is.null(help) )
                   x@help <- c(x@help, setNames(help, s))
               validObject(x)
@@ -150,13 +152,55 @@ setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs="character"),
               parsed
           })
 
+setGeneric(".printUsageString", def=function(x) standardGeneric(".printUsageString"))
+setMethod(".printUsageString", signature=c(x="ArgParser"),
+          definition=function(x) {
+              getHelpString <- function(f, h) sprintf("  %s\t%s", f, h)
+              addBracket <- function(s) sprintf("[%s]", s)
+              usage_line <- "Usage: prog.R"
+              help_parag <- character(0)
+              s1tag <- sapply(logic_switches <- names(x@switches_logic), addBracket)
+              if ( ns1 <- length(s1tag) ) {
+                  usage_line <- paste(usage_line, paste(s1tag, collapse=' '))
+                  help_parag <- c(help_parag, paste0("Logical switch", ifelse(ns1 > 1, "es:", ':')))
+                  for ( s in logic_switches )
+                      help_parag <- c(help_parag, getHelpString(s, x@help[s]))
+              }
+              s2tag <- sapply(adhoc_switches <- names(x@switches_any), addBracket)
+              if ( ns2 <- length(s2tag) ) {
+                  usage_line <- paste(usage_line, paste(s2tag, collapse=' '))
+                  help_parag <- c(help_parag, paste0("Ad-hoc switch", ifelse(ns2 > 1, "es:", ':')))
+                  for ( s in adhoc_switches )
+                      help_parag <- c(help_parag, getHelpString(s, x@help[s]))
+              }
+              f1tag <- forced_flags <- names(which(!x@flags_isOptional))
+              if ( nf1 <- length(f1tag) ) {
+                  usage_line <- paste(usage_line, paste(f1tag, collapse=' '))
+                  help_parag <- c(help_parag, paste0("Forced flag", ifelse(nf1 > 1, "s:", ':')))
+                  for ( f in forced_flags )
+                      help_parag <- c(help_parag, getHelpString(f, x@help[f]))
+              }
+              f2tag <- sapply(optional_flags <- names(which(x@flags_isOptional)), addBracket)
+              if ( nf2 <- length(f2tag) ) {
+                  usage_line <- paste(usage_line, paste(f2tag, collapse=' '))
+                  help_parag <- c(help_parag, paste0("Optional flag", ifelse(nf2 > 1, "s:", ':')))
+                  for ( f in optional_flags )
+                      help_parag <- c(help_parag, getHelpString(f, x@help[f]))
+              }
+              writeLines(usage_line)
+              writeLines('')
+              writeLines(x@desc)
+              writeLines('')
+              writeLines(help_parag)
+          })
+
 setGeneric("parseCommandLine", def=function(x, cmdargs, ...) standardGeneric("parseCommandLine"))
 setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"), 
           definition=function(x, cmdargs, trim_prefix=FALSE) {
 
               ## print usage then exit if --help is raised
               if ( any(c("--help", "-h") %in% cmdargs) ) {
-                  write("print this usage", stdout())
+                  .printUsageString(x)
                   quit(status=0)
               }
               
