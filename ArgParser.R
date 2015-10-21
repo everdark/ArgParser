@@ -20,10 +20,14 @@ ArgParser <- setClass("ArgParser",
                           all_argnames <- c(names(object@switches_logic), 
                                             names(object@switches_any), 
                                             names(object@flags))
+                          all_alias <- c(names(object@flags_alias),
+                                         names(object@switches_alias))
                           if ( any(sapply(all_argnames, function(x) substr(x,1,2) != "--")) )
                               return("Name of flags/switches should have double-dash (--) prefix.")
-                          if ( any(duplicated(all_argnames)) )
+                          if ( any(duplicated(all_argnames)) || any(duplicated(all_alias)) )
                               return("Duplicated flags/switches found.")
+                          if ( any(sapply(all_alias, function(x) substr(x,1,1) != '-')) )
+                              return("Short name alias should have single-dash (-) prefix.")
                           TRUE
                       })
 
@@ -32,7 +36,7 @@ ArgParser <- setClass("ArgParser",
 #-----------------------------------#
 setGeneric("addFlag", def=function(x, f, default, ...) standardGeneric("addFlag"))
 setMethod("addFlag", signature=c(x="ArgParser", f="character", default="missing"), 
-          definition=function(x, f, optional=TRUE, help=NULL) {
+          definition=function(x, f, short=NULL, optional=TRUE, help=NULL) {
               x@flags <- c(x@flags, setNames(NA, f))
               x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, f))
               if ( !is.null(help) )
