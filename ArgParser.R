@@ -156,7 +156,14 @@ setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs="character"),
 setGeneric(".printUsageString", def=function(x) standardGeneric(".printUsageString"))
 setMethod(".printUsageString", signature=c(x="ArgParser"),
           definition=function(x) {
-              getHelpString <- function(f, h) sprintf("  %s\t%s", f, h)
+              getHelpString <- function(argname, h) {
+                  all_alias <- c(x@flags_alias, x@switches_alias)
+                  if ( !is.na(short <- all_alias[argname]) ) {
+                    sprintf("  %s, %s\t%s", short, argname, h)
+                  } else {
+                    sprintf("  %s\t%s", argname, h)
+                  }
+              }
               addBracket <- function(s) sprintf("[%s]", s)
               usage_line <- "Usage: prog.R"
               help_parag <- character(0)
