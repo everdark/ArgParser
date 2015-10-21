@@ -4,9 +4,11 @@
 #---------------------#
 ArgParser <- setClass("ArgParser", 
                       slots=c(flags="list",
+                              flags_alias="character",
                               flags_isOptional="logical",
                               switches_logic="logical",
                               switches_any="list",
+                              switches_alias="character",
                               opt="character",
                               usage="character"),
                       prototype=list(switches_logic=c(`--help`=FALSE),
@@ -147,9 +149,9 @@ setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs="character"),
               parsed
           })
 
-setGeneric("parseCommandLine", def=function(x, cmdargs) standardGeneric("parseCommandLine"))
+setGeneric("parseCommandLine", def=function(x, cmdargs, ...) standardGeneric("parseCommandLine"))
 setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"), 
-          definition=function(x, cmdargs) {
+          definition=function(x, cmdargs, trim_prefix=FALSE) {
 
               ## print usage then exit if --help is raised
               if ( any(c("--help", "-h") %in% cmdargs) ) {
@@ -178,6 +180,9 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
               ## parse positional args (opt)
               parsed_opt <- .parseOpt(x=x, cmdargs=cmdargs)
               parsed <- c(parsed, parsed_opt)
+
+              if ( trim_prefix )
+                  names(parsed) <- gsub("^--", '', names(parsed))
 
               parsed
           })
