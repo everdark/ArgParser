@@ -94,8 +94,8 @@ test_that("duplicated flags with default value should be ignored, only first mat
 #-------------------#
 
 argParser3 <- ArgParser() %>%
-    addSwitch("--s1", default=TRUE) %>%
-    addSwitch("--s2", default=FALSE)
+    addSwitch("--s1", states=TRUE) %>%
+    addSwitch("--s2", states=FALSE)
 
 cmdargs17 <- getTestInput("prog.R")
 

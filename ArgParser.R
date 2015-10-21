@@ -34,55 +34,52 @@ ArgParser <- setClass("ArgParser",
 #-----------------------------------#
 # define methods for argument adder #
 #-----------------------------------#
-setGeneric("addFlag", def=function(x, f, default, ...) standardGeneric("addFlag"))
-setMethod("addFlag", signature=c(x="ArgParser", f="character", default="missing"), 
-          definition=function(x, f, short=NULL, optional=TRUE, help=NULL) {
-              x@flags <- c(x@flags, setNames(NA, f))
-              x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, f))
+setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
+setMethod("addFlag", signature=c(x="ArgParser", name="character"), 
+          definition=function(x, name, short=NULL, default=NULL, optional=TRUE, help=NULL) {
+              if ( !is.null(default) ) {
+                  if ( length(default) > 1 )
+                      warning("Data for default is more than one, only keep the first.")
+                  x@flags <- c(x@flags, setNames(default[1], name))
+              } else {
+                  x@flags <- c(x@flags, setNames(NA, name))
+              }
+              x@flags_alias <- c(x@flags_alias, setNames(ifelse(is.null(short), NA_character_, short), name))
+              x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, name))
               if ( !is.null(help) )
-                  x@help <- c(x@help, setNames(help, f))
-              validObject(x)
-              x
-          })
-setMethod("addFlag", signature=c(x="ArgParser", f="character", default="ANY"), 
-          definition=function(x, f, default, optional=TRUE, help=NULL) {
-              if ( length(default) > 1 )
-                  warning("Data for default is more than one, only keep the first.")
-              x@flags <- c(x@flags, setNames(default[1], f))
-              x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, f))
-              if ( !is.null(help) )
-                  x@help <- c(x@help, setNames(help, f))
+                  x@help <- c(x@help, setNames(help, name))
               validObject(x)
               x
           })
 
-setGeneric("addSwitch", def=function(x, s, default, ...) standardGeneric("addSwitch"))
-setMethod("addSwitch", signature=c(x="ArgParser", s="character", default="logical"), 
-          definition=function(x, s, default=FALSE, help=NULL) {
-              x@switches_logic <- c(x@switches_logic, setNames(default, s))
+setGeneric("addSwitch", def=function(x, name, ...) standardGeneric("addSwitch"))
+setMethod("addSwitch", signature=c(x="ArgParser", name="character"), 
+          definition=function(x, name, short=NULL, states=FALSE, help=NULL) {
+              if ( !is.vector(states) ) 
+                  stop("Value of states must be of type vector.")
+              if ( is.logical(states) ) {
+                  if ( length(states) > 1 )
+                      warning("Logical states has length > 1. Only the first is respected (as the unpushed state).")
+                  x@switches_logic <- c(x@switches_logic, setNames(states[1], name))
+              } else {
+                  if ( length(states) > 2 )
+                      warning("States has length > 2. Only the first two are respected (as unpushed/pushed state)")
+                  names(states) <- c("unpushed", "pushed")
+                  x@switches_any <- c(x@switches_any, setNames(list(as.list(states)), name))
+              }
+              x@switches_alias <- c(x@switches_alias, setNames(ifelse(is.null(short), NA_character_, short), name))
               if ( !is.null(help) )
-                  x@help <- c(x@help, setNames(help, s))
-              validObject(x)
-              x
-          })
-setMethod("addSwitch", signature=c(x="ArgParser", s="character", default="list"), 
-          definition=function(x, s, default, help=NULL) {
-              if ( length(default) < 2 )
-                  stop("The default, if a list, must be supplied both unpushed/pushed states, in order.")
-              names(default) <- c("unpushed", "pushed")
-              x@switches_any <- c(x@switches_any, setNames(list(default), s))
-              if ( !is.null(help) )
-                  x@help <- c(x@help, setNames(help, s))
+                  x@help <- c(x@help, setNames(help, name))
               validObject(x)
               x
           })
 
-setGeneric("addOpt", def=function(x, opt, ...) standardGeneric("addOpt"))
-setMethod("addOpt", signature=c(x="ArgParser", opt="character", help=NULL), 
-          definition=function(x, opt) {
-              x@opt <- c(x@opt, opt)
+setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
+setMethod("addOpt", signature=c(x="ArgParser", name="character", help=NULL), 
+          definition=function(x, name) {
+              x@opt <- c(x@opt, name)
               if ( !is.null(help) )
-                  x@help <- c(x@help, setNames(help, opt))
+                  x@help <- c(x@help, setNames(help, name))
               validObject(x)
               x
           })
