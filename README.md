@@ -30,7 +30,7 @@ pargs
 ```
 + Then run:
 ```
-$ ./test.R -f3 v3 opt1 --flag2 opt2 -s1
+$ ./test.R -f3 v3 opt1 opt2 -s1 --flag2
 Warning message:
 In .local(x, name, ...) :
   Found nrequired < narg, then this opt MUST be the last opt defined so it will work.
@@ -45,9 +45,9 @@ Original command line string:
  [6] "-f3"
  [7] "v3"
  [8] "opt1"
- [9] "--flag2"
-[10] "opt2"
-[11] "-s1"
+ [9] "opt2"
+[10] "-s1"
+[11] "--flag2"
 
 Parsed result:
 --------------
@@ -55,7 +55,7 @@ $flag3
 [1] "v3"
 
 $flag2
-[1] "opt2"
+[1] "f1d"
 
 $help
 [1] FALSE
