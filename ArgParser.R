@@ -142,7 +142,14 @@ setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
           definition=function(x, cmdargs) {
 
               parsed <- list()
-              
+
+              # replace short alias with full name, if any
+              if ( any(has_alias <- !is.na(x@switches_alias)) ) {
+                  switches_with_alias <- x@switches_alias[has_alias]
+                  for ( sname in names(switches_with_alias) )
+                      cmdargs <- gsub(switches_with_alias[sname], sname, cmdargs)
+              }
+
               # parse logical switches
               parsed <- c(parsed, x@switches_logic)
               if ( any(pushed <- names(x@switches_logic) %in% cmdargs) ) {
