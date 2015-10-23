@@ -22,11 +22,12 @@ ArgParser <- setClass("ArgParser",
                                             names(object@flags))
                           all_alias <- c(object@flags_alias,
                                          object@switches_alias)
+                          all_alias <- all_alias[!is.na(all_alias)]
                           if ( any(sapply(all_argnames, function(x) substr(x,1,2) != "--")) )
                               return("Name of flags/switches should have double-dash (--) prefix.")
                           if ( any(duplicated(c(all_argnames, all_alias))) )
                               return("Duplicated flags/switches found.")
-                          if ( any(sapply(all_alias, function(x) substr(x,1,1) != '-'), na.rm=TRUE) )
+                          if ( any(sapply(all_alias, function(x) substr(x,1,1) != '-')) )
                               return("Short name alias should have single-dash (-) prefix.")
                           TRUE
                       })
@@ -93,7 +94,21 @@ setMethod(".parseFlag", signature=c(x="ArgParser", cmdargs="character"),
               
               parsed <- list()
               allargs <- c(names(x@flags), names(x@switches_logic), names(x@switches_any))
-              
+
+              # replace short alias with full name, if any
+              if ( any(has_alias <- !is.na(x@flags_alias)) ) {
+                  flags_with_alias <- x@flags_alias[has_alias]
+                  for ( fname in names(flags_with_alias) )
+                      cmdargs <- gsub(flags_with_alias[fname], fname, cmdargs)
+              }
+
+              # check occurrence of forced flags, if any
+              if ( length(forced_flags <- names(which(!x@flags_isOptional))) ) {
+                  if ( !all(forced_and_raised <- forced_flags %in% cmdargs) )
+                      stop(sprintf("Missing forced flag(s): %s", 
+                                   paste(forced_flags[!forced_and_raised], collapse=", ")))
+              }
+             
               if ( length(x@flags) ) {
                   with_default <- sapply(x@flags, function(x) !is.na(x))
 
@@ -221,13 +236,6 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
               
               parsed <- list()
               all_argnames <- c(names(x@flags), names(x@switches_logic), names(x@switches_any))
-
-              ## check occurrence of forced flags, if any
-              if ( length(forced_flags <- names(which(!x@flags_isOptional))) ) {
-                  if ( !all(forced_and_raised <- forced_flags %in% cmdargs) )
-                      stop(sprintf("Missing forced flag(s): %s", 
-                                   paste(forced_flags[!forced_and_raised], collapse=", ")))
-              }
 
               ## parse flags
               parsed_flags <- .parseFlag(x=x, cmdargs=cmdargs)
