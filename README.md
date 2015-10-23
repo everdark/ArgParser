@@ -28,7 +28,30 @@ writeLines("Parsed result:")
 writeLines("--------------")
 pargs
 ```
-+ Then run:
++ Then run help:
+```
+$ ./test.R -h
+Usage: test.R [--help] [--logical-switch] [--adhoc-switch] --flag3 [--flag1] [--flag2] opt1 opt2[...]
+
+A test for ArgParser
+
+Logical switches:
+  -h, --help             show this message and exit
+  -s1, --logical-switch  a logical switch
+Ad-hoc switch:
+  -s2, --adhoc-switch    an ad-hoc switch
+Forced flag:
+  -f3, --flag3           this is a forced flag
+Optional flags:
+  -f1, --flag1           this is an optional flag
+  --flag2                this is an optional flag with default value
+Positional arguments:
+  opt1                   positional arg 1
+  opt2                   positional arg 2
+```
+
+
++ Or run any valid arg string:
 ```
 $ ./test.R -f3 v3 opt1 opt2 -s1 --flag2
 Warning message:
