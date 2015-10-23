@@ -96,10 +96,12 @@ setMethod(".parseFlag", signature=c(x="ArgParser", cmdargs="character"),
               allargs <- c(names(x@flags), names(x@switches_logic), names(x@switches_any))
 
               # replace short alias with full name, if any
-              if ( any(has_alias <- !is.na(x@flags_alias)) ) {
-                  flags_with_alias <- x@flags_alias[has_alias]
-                  for ( fname in names(flags_with_alias) )
-                      cmdargs <- gsub(flags_with_alias[fname], fname, cmdargs)
+              if ( any(alias_defined <- !is.na(x@flags_alias)) ) {
+                  flags_with_alias <- x@flags_alias[alias_defined]
+                  if ( any(is_alias <- cmdargs %in% flags_with_alias) ) {
+                      alias_raised <- cmdargs[is_alias]
+                      cmdargs[cmdargs == alias_raised] <- names(which(x@flags_alias == alias_raised))
+                  }    
               }
 
               # check occurrence of forced flags, if any
@@ -144,10 +146,12 @@ setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
               parsed <- list()
 
               # replace short alias with full name, if any
-              if ( any(has_alias <- !is.na(x@switches_alias)) ) {
-                  switches_with_alias <- x@switches_alias[has_alias]
-                  for ( sname in names(switches_with_alias) )
-                      cmdargs <- gsub(switches_with_alias[sname], sname, cmdargs)
+              if ( any(alias_defined <- !is.na(x@switches_alias)) ) {
+                  switches_with_alias <- x@switches_alias[alias_defined]
+                  if ( any(is_alias <- cmdargs %in% switches_with_alias) ) {
+                      alias_raised <- cmdargs[is_alias]
+                      cmdargs[cmdargs == alias_raised] <- names(which(x@switches_alias == alias_raised))
+                  }    
               }
 
               # parse logical switches
@@ -168,9 +172,9 @@ setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
               parsed
           })
 
-setGeneric(".parseOpt", def=function(x, cmdargs) standardGeneric(".parseOpt"))
-setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs="character"),
-          definition=function(x, cmdargs) {
+setGeneric(".parseOpt", def=function(x, cmdargs_consumed) standardGeneric(".parseOpt"))
+setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs_consumed="character"),
+          definition=function(x, cmdargs_consumed) {
               parsed <- list()
               parsed
           })
@@ -253,8 +257,9 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
               parsed <- c(parsed, parsed_switches)
 
               ## parse positional args (opt)
-              parsed_opt <- .parseOpt(x=x, cmdargs=cmdargs)
-              parsed <- c(parsed, parsed_opt)
+
+              # parsed_opt <- .parseOpt(x=x, cmdargs=cmdargs)
+              # parsed <- c(parsed, parsed_opt)
 
               if ( trim_prefix )
                   names(parsed) <- gsub("^--", '', names(parsed))
