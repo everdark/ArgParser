@@ -4,6 +4,7 @@
 #---------------------#
 ArgParser <- setClass("ArgParser", 
                       slots=c(desc="character",
+                              prog="character",
                               flags="list",
                               flags_alias="character",
                               flags_isOptional="logical",
@@ -15,6 +16,7 @@ ArgParser <- setClass("ArgParser",
                               opt_nrequired="integer",
                               help="character"),
                       prototype=list(desc='',
+                                     prog='',
                                      switches_logic=c(`--help`=FALSE),
                                      switches_alias=c(`--help`="-h"),
                                      help=c(`--help`="show this message and exit")
@@ -213,6 +215,7 @@ setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs_consumed="character"),
 setGeneric(".printUsageString", def=function(x, cmdargs, ...) standardGeneric(".printUsageString"))
 setMethod(".printUsageString", signature=c(x="ArgParser", cmdargs="character"),
           definition=function(x, cmdargs, align=TRUE) {
+              # define helper func
               getHelpString <- function(argname, h, all_alias) {
                   if ( !is.na(short <- all_alias[argname]) ) {
                       out <- sprintf("  %s, %s\t%s", short, argname, h)
@@ -228,7 +231,13 @@ setMethod(".printUsageString", signature=c(x="ArgParser", cmdargs="character"),
                   out
               }
               addBracket <- function(s) sprintf("[%s]", s)
-              usage_line <- "Usage: prog.R"
+
+              # get script name
+              prog_fullpath <- grep("^--file=", cmdargs, value=TRUE)
+              prog_name <- ifelse(length(prog_fullpath), basename(prog_fullpath), '')
+              usage_line <- sprintf("Usage: %s", ifelse(x@prog == '', prog_name, x@prog))
+
+              # ensemble help paragraph
               help_parag <- character(0)
               all_alias <- c(x@flags_alias, x@switches_alias)
               s1tag <- sapply(logic_switches <- names(x@switches_logic), addBracket)
@@ -259,6 +268,20 @@ setMethod(".printUsageString", signature=c(x="ArgParser", cmdargs="character"),
                   for ( f in optional_flags )
                       help_parag <- c(help_parag, getHelpString(f, x@help[f], all_alias))
               }
+              if ( nopt <- length(x@opt) ) {
+                  help_parag <- c(help_parag, paste0("Positional argument", ifelse(nopt > 1, "s:", ':')))
+                  for ( opt in x@opt ) {
+                      usage_line <- 
+                      if ( (narg <- x@opt_narg[opt]) > (nreq <- x@opt_nrequired[opt]) ) {
+                          paste(usage_line, paste0(paste(rep(opt, nreq), collapse=' '), "[...]"))
+                      } else {
+                          paste(usage_line, paste(rep(opt, narg), collapse=' '))
+                      }
+                      help_parag <- c(help_parag, getHelpString(opt, x@help[opt], all_alias))
+                  }
+              }
+
+              # write out
               writeLines(usage_line)
               writeLines('')
               writeLines(x@desc)
