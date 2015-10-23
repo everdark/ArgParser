@@ -20,6 +20,7 @@ for ( arg in names(pargs) )
 ```
 + Then run:
 ```
+$ ./test.R -f3 v3 opt1 --flag2 opt2 -s1
 Warning message:
 In .local(x, name, ...) :
   Found nrequired < narg, then this opt MUST be the last opt defined so it will work.
