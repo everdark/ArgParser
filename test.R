@@ -12,6 +12,14 @@ p <- ArgParser(desc="A test for ArgParser") %>%
     addOpt("opt1", help="positional arg 1") %>%
     addOpt("opt2", narg=2, nrequired=1, help="positional arg 2")
 pargs <- parseCommandLine(p, commandArgs(), trim=T)
+
+writeLines('')
+writeLines("Original command line string:")
+writeLines("-----------------------------")
+commandArgs()
+writeLines('')
+writeLines("Parsed result:")
+writeLines("--------------")
 pargs
 # for ( arg in names(pargs) )
 #     write(paste(arg, pargs[[arg]], '\t'), stdout())
