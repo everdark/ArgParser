@@ -16,13 +16,48 @@ p <- ArgParser() %>% addFlag("--f1") %>%
 pargs <- parseCommandLine(p, commandArgs())
 for ( arg in names(pargs) )
     write(paste(arg, pargs[[arg]], '\t'), stdout())
+
 ```
 + Then run:
 ```
-$ ./test.R --f1 v1 --f2 v2 --s1
---f1 v1     
---f2 v2     
---help FALSE    
---s1 TRUE   
---s2 1  
+Warning message:
+In .local(x, name, ...) :
+  Found nrequired < narg, then this opt MUST be the last opt defined so it will work.
+
+Original command line string:
+-----------------------------
+ [1] "/Library/Frameworks/R.framework/Resources/bin/exec/R"
+ [2] "--slave"
+ [3] "--no-restore"
+ [4] "--file=./test.R"
+ [5] "--args"
+ [6] "-f3"
+ [7] "v3"
+ [8] "opt1"
+ [9] "--flag2"
+[10] "opt2"
+[11] "-s1"
+
+Parsed result:
+--------------
+$flag3
+[1] "v3"
+
+$flag2
+[1] "opt2"
+
+$help
+[1] FALSE
+
+$`logical-switch`
+[1] TRUE
+
+$`adhoc-switch`
+[1] 1
+
+$opt1
+[1] "opt1"
+
+$opt2
+[1] "opt2" NA
 ```
