@@ -11,6 +11,8 @@ ArgParser <- setClass("ArgParser",
                               switches_any="list",
                               switches_alias="character",
                               opt="character",
+                              opt_narg="integer",
+                              opt_nrequired="integer",
                               help="character"),
                       prototype=list(desc='',
                                      switches_logic=c(`--help`=FALSE),
@@ -78,8 +80,16 @@ setMethod("addSwitch", signature=c(x="ArgParser", name="character"),
 
 setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
 setMethod("addOpt", signature=c(x="ArgParser", name="character"), 
-          definition=function(x, name, help=NULL) {
+          definition=function(x, name, help=NULL, narg=1L, nrequired=narg) {
+              narg <- as.integer(narg)
+              nrequired <- as.integer(nrequired)
+              if ( nrequired > narg )
+                  stop("Found nrequired > narg, which is impossible.")
+              if ( nrequired < narg )
+                  warning("Found nrequired < narg, then this opt MUST be the last opt defined so it will work.")
               x@opt <- c(x@opt, name)
+              x@opt_narg <- c(x@opt_narg, setNames(narg, name))
+              x@opt_nrequired <- c(x@opt_nrequired, setNames(nrequired, name))
               if ( !is.null(help) )
                   x@help <- c(x@help, setNames(help, name))
               validObject(x)
@@ -187,17 +197,22 @@ setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
 setGeneric(".parseOpt", def=function(x, cmdargs_consumed) standardGeneric(".parseOpt"))
 setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs_consumed="character"),
           definition=function(x, cmdargs_consumed) {
+              parsed <- list()
               if ( length(x@opt) ) {
-                  parsed <- as.list(setNames(cmdargs_consumed, x@opt))
-                  parsed
-              } else {
-                  list()
+                  for ( opt in x@opt ) {
+                      if ( length(cmdargs_consumed) < x@opt_nrequired[opt] )
+                          stop(sprintf("Number of supplied positional arg (%s) less than required.", opt))
+                      to_narg <- 1:x@opt_narg[opt]
+                      parsed <- c(parsed, setNames(list(cmdargs_consumed[to_narg]), opt))
+                      cmdargs_consumed <- cmdargs_consumed[-to_narg]
+                  }
               }
+              parsed
           })
 
-setGeneric(".printUsageString", def=function(x, ...) standardGeneric(".printUsageString"))
-setMethod(".printUsageString", signature=c(x="ArgParser"),
-          definition=function(x, align=TRUE) {
+setGeneric(".printUsageString", def=function(x, cmdargs, ...) standardGeneric(".printUsageString"))
+setMethod(".printUsageString", signature=c(x="ArgParser", cmdargs="character"),
+          definition=function(x, cmdargs, align=TRUE) {
               getHelpString <- function(argname, h, all_alias) {
                   if ( !is.na(short <- all_alias[argname]) ) {
                       out <- sprintf("  %s, %s\t%s", short, argname, h)
@@ -257,7 +272,7 @@ setMethod("parseCommandLine", signature=c(x="ArgParser"),
 
               ## print usage then exit if --help is raised
               if ( any(c("--help", "-h") %in% cmdargs) ) {
-                  .printUsageString(x)
+                  .printUsageString(x, cmdargs)
                   quit(status=0)
               }
               
@@ -273,7 +288,12 @@ setMethod("parseCommandLine", signature=c(x="ArgParser"),
               parsed <- c(parsed, parsed_switches$argv)
 
               ## parse positional args (opt)
-              parsed_opt <- .parseOpt(x=x, cmdargs=parsed_switches$cmdargs_consumed)
+              if ( !is.na(args_idx <- match("--args", parsed_switches$cmdargs_consumed)) ) {
+                  cmdargs_consumed <- parsed_switches$cmdargs_consumed[-c(1:args_idx)]
+              } else {
+                  cmdargs_consumed <- parsed_switches$cmdargs_consumed
+              }
+              parsed_opt <- .parseOpt(x=x, cmdargs_consumed=cmdargs_consumed)
               parsed <- c(parsed, parsed_opt)
 
               if ( trim_prefix )
