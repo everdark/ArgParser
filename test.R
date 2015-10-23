@@ -10,8 +10,9 @@ p <- ArgParser(desc="A test for ArgParser") %>%
     addSwitch("--logical-switch", "-s1", help="a logical switch", states=FALSE) %>%
     addSwitch("--adhoc-switch", "-s2", help="an ad-hoc switch", states=list(1,0)) %>%
     addOpt("opt1", help="positional arg 1") %>%
-    addOpt("opt2", help="positional arg 2")
+    addOpt("opt2", narg=2, nrequired=1, help="positional arg 2")
 pargs <- parseCommandLine(p, commandArgs(), trim=T)
-for ( arg in names(pargs) )
-    write(paste(arg, pargs[[arg]], '\t'), stdout())
+pargs
+# for ( arg in names(pargs) )
+#     write(paste(arg, pargs[[arg]], '\t'), stdout())
 
