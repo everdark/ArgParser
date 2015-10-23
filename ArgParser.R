@@ -34,13 +34,13 @@ ArgParser <- setClass("ArgParser",
                               return("Duplicated flags/switches found.")
                           if ( any(sapply(all_alias, function(x) substr(x,1,1) != '-')) )
                               return("Short name alias should have single-dash (-) prefix.")
-                          if ( length(object@prog) > 1 )
-                              warning("Program name has length > 1. Only the first one is respected.")
                           TRUE
                       })
 
 setMethod("initialize", signature="ArgParser", 
           definition=function(.Object, desc='', prog='') {
+              if ( length(prog) > 1 )
+                  warning("Program name has length > 1. Only the first one is respected.")
               .Object@desc <- desc
               .Object@prog <- prog
               .Object
