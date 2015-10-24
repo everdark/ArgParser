@@ -3,6 +3,12 @@
 
 context("Add flags onto ArgParser instance")
 
+test_that("name definition of length > 1 will be warnedm and the first one kept", {
+          expect_warning(ArgParser() %>% addFlag(c("--f1", "--f2")))
+          expect_identical((ArgParser() %>% addFlag(c("--f1", "--f2")))@flags,
+                           list(`--f1`=NA))
+})
+
 test_that("duplicated flag definition will cause error", {
           expect_error(ArgParser() %>% addFlag("--f1") %>% addFlag("--f1"), 
                        regexp="^.*invalid class")
@@ -69,6 +75,12 @@ test_that("help, if any, is property set", {
           expect_identical((ArgParser() %>% addFlag("--f1", help="f1 help") 
                                 %>% addFlag("--f2"))@help,
                            c(`--help`="show this message and exit", `--f1`="f1 help"))
+})
+
+test_that("help definition of length > 1 will be warned, and the first one kept", {
+          expect_warning(ArgParser() %>% addFlag("--f1", help=c("a", "b")))
+          expect_identical((ArgParser() %>% addFlag("--f1", help=c("a", "b")))@help["--f1"],
+                           c(`--f1`="a"))
 })
 
 test_that("all arguments work properly together", {
