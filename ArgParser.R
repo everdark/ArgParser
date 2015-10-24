@@ -79,6 +79,8 @@ setMethod("addSwitch", signature=c(x="ArgParser", name="character"),
               } else {
                   if ( length(states) > 2 )
                       warning("States has length > 2. Only the first two are respected (as unpushed/pushed state)")
+                  if ( length(states) < 2 )
+                      stop("Non-logical states vector should have length 2.")
                   names(states) <- c("unpushed", "pushed")
                   x@switches_any <- c(x@switches_any, setNames(list(as.list(states)), name))
               }
