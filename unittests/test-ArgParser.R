@@ -18,3 +18,13 @@ test_that("description, if any, is porperly set", {
 test_that("dsecription of lentgh > 1 is allowed", {
           expect_identical(ArgParser(desc=letters)@desc, letters)
 })
+
+test_that("slots other than dsec and prog are prevented from initialization ", {
+          expect_error(ArgParser(flags=list(`--f`="test")), regexp="^.*unused argument.*")
+          expect_error(ArgParser(flags_isOptional=c(`--f`=TRUE)), regexp="^.*unused argument.*")
+          expect_error(ArgParser(opt="opt1"), regexp="^.*unused argument.*")
+          expect_error(ArgParser(help=c(`--f`="help")), regexp="^.*unused argument.*")
+})
+
+
+
