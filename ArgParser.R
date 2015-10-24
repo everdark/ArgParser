@@ -22,16 +22,15 @@ ArgParser <- setClass("ArgParser",
                                      help=c(`--help`="show this message and exit")
                                      ),
                       validity=function(object) {
-                          all_argnames <- c(names(object@switches_logic), 
-                                            names(object@switches_any), 
-                                            names(object@flags),
-                                            object@opt)
+                          all_switches_flags <- c(names(object@switches_logic), 
+                                                  names(object@switches_any), 
+                                                  names(object@flags))
                           all_alias <- c(object@flags_alias,
                                          object@switches_alias)
                           all_alias <- all_alias[!is.na(all_alias)]
-                          if ( any(sapply(all_argnames, function(x) substr(x,1,2) != "--")) )
+                          if ( any(sapply(all_switches_flags, function(x) substr(x,1,2) != "--")) )
                               return("Name of flags/switches should have double-dash (--) prefix.")
-                          if ( any(duplicated(c(all_argnames, all_alias))) )
+                          if ( any(duplicated(c(all_switches_flags, object@opt, all_alias))) )
                               return("Duplicated flags/switches/opt found.")
                           if ( any(sapply(all_alias, function(x) substr(x,1,1) != '-')) )
                               return("Short name alias should have single-dash (-) prefix.")
@@ -53,17 +52,19 @@ setMethod("initialize", signature="ArgParser",
 setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
 setMethod("addFlag", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, default=NULL, optional=TRUE, help=NULL) {
+              if ( length(name) > 1 )
+                  warning("Data for name has length > 1, only the first one is respected.")
               if ( !is.null(default) ) {
                   if ( length(default) > 1 )
-                      warning("Data for default is more than one, only keep the first.")
-                  x@flags <- c(x@flags, setNames(default[1], name))
+                      warning("Data for default has length > 1, only the first one is respected.")
+                  x@flags <- c(x@flags, setNames(default[1], name[1]))
               } else {
-                  x@flags <- c(x@flags, setNames(NA, name))
+                  x@flags <- c(x@flags, setNames(NA, name[1]))
               }
-              x@flags_alias <- c(x@flags_alias, setNames(ifelse(is.null(short), NA_character_, short), name))
-              x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, name))
+              x@flags_alias <- c(x@flags_alias, setNames(ifelse(is.null(short), NA_character_, short), name[1]))
+              x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, name[1]))
               if ( !is.null(help) )
-                  x@help <- c(x@help, setNames(help, name))
+                  x@help <- c(x@help, setNames(help, name[1]))
               validObject(x)
               x
           })
@@ -71,23 +72,25 @@ setMethod("addFlag", signature=c(x="ArgParser", name="character"),
 setGeneric("addSwitch", def=function(x, name, ...) standardGeneric("addSwitch"))
 setMethod("addSwitch", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, states=FALSE, help=NULL) {
+              if ( length(name) > 1 )
+                  warning("Data for name has length > 1, only the first one is respected.")
               if ( !is.vector(states) ) 
                   stop("Value of states must be of type vector.")
               if ( is.logical(states) ) {
                   if ( length(states) > 1 )
                       warning("Logical states has length > 1. Only the first is respected (as the unpushed state).")
-                  x@switches_logic <- c(x@switches_logic, setNames(states[1], name))
+                  x@switches_logic <- c(x@switches_logic, setNames(states[1], name[1]))
               } else {
                   if ( length(states) > 2 )
                       warning("States has length > 2. Only the first two are respected (as unpushed/pushed state)")
                   if ( length(states) < 2 )
                       stop("Non-logical states vector should have length 2.")
                   names(states) <- c("unpushed", "pushed")
-                  x@switches_any <- c(x@switches_any, setNames(list(as.list(states)), name))
+                  x@switches_any <- c(x@switches_any, setNames(list(as.list(states)), name[1]))
               }
-              x@switches_alias <- c(x@switches_alias, setNames(ifelse(is.null(short), NA_character_, short), name))
+              x@switches_alias <- c(x@switches_alias, setNames(ifelse(is.null(short), NA_character_, short), name[1]))
               if ( !is.null(help) )
-                  x@help <- c(x@help, setNames(help, name))
+                  x@help <- c(x@help, setNames(help, name[1]))
               validObject(x)
               x
           })
@@ -95,17 +98,19 @@ setMethod("addSwitch", signature=c(x="ArgParser", name="character"),
 setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
 setMethod("addOpt", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, help=NULL, narg=1L, nrequired=narg) {
+              if ( length(name) > 1 )
+                  warning("Data for name has length > 1, only the first one is respected.")
               narg <- as.integer(narg)
               nrequired <- as.integer(nrequired)
               if ( nrequired > narg )
                   stop("Found nrequired > narg, which is impossible.")
               if ( nrequired < narg )
                   warning("Found nrequired < narg, then this opt MUST be the last opt defined so it will work.")
-              x@opt <- c(x@opt, name)
-              x@opt_narg <- c(x@opt_narg, setNames(narg, name))
-              x@opt_nrequired <- c(x@opt_nrequired, setNames(nrequired, name))
+              x@opt <- c(x@opt, name[1])
+              x@opt_narg <- c(x@opt_narg, setNames(narg, name[1]))
+              x@opt_nrequired <- c(x@opt_nrequired, setNames(nrequired, name[1]))
               if ( !is.null(help) )
-                  x@help <- c(x@help, setNames(help, name))
+                  x@help <- c(x@help, setNames(help, name[1]))
               validObject(x)
               x
           })
