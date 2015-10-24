@@ -24,14 +24,15 @@ ArgParser <- setClass("ArgParser",
                       validity=function(object) {
                           all_argnames <- c(names(object@switches_logic), 
                                             names(object@switches_any), 
-                                            names(object@flags))
+                                            names(object@flags),
+                                            object@opt)
                           all_alias <- c(object@flags_alias,
                                          object@switches_alias)
                           all_alias <- all_alias[!is.na(all_alias)]
                           if ( any(sapply(all_argnames, function(x) substr(x,1,2) != "--")) )
                               return("Name of flags/switches should have double-dash (--) prefix.")
                           if ( any(duplicated(c(all_argnames, all_alias))) )
-                              return("Duplicated flags/switches found.")
+                              return("Duplicated flags/switches/opt found.")
                           if ( any(sapply(all_alias, function(x) substr(x,1,1) != '-')) )
                               return("Short name alias should have single-dash (-) prefix.")
                           TRUE
