@@ -2,11 +2,18 @@
 #---------------------#
 # define helper func  #
 #---------------------#
-.checkArgLength <- function(arg, maxlen) {
+.checkArgLen <- function(arg, maxlen) {
     if ( length(arg) > maxlen ) 
         warning(sprintf("Argument %s has length > %s; only the first %s is respected.", 
                         as.character(substitute(arg)), maxlen, maxlen))
     arg[1:maxlen]
+}
+
+.checkDupArg <- function(cmdargs, allargs) {
+    arg_raised <- cmdargs[cmdargs %in% allargs]
+    if ( any(is_dup <- duplicated(arg_raised)) )
+        stop(sprintf("Some flags/switches are duplicated in given command line string: %s",
+                     paste(arg_raised[is_dup])))
 }
 
 #---------------------#
@@ -49,7 +56,7 @@ ArgParser <- setClass("ArgParser",
 
 setMethod("initialize", signature="ArgParser", 
           definition=function(.Object, desc='', prog='') {
-              prog <- .checkArgLength(prog, 1)
+              prog <- .checkArgLen(prog, 1)
               .Object@desc <- desc
               .Object@prog <- prog
               .Object
@@ -61,9 +68,9 @@ setMethod("initialize", signature="ArgParser",
 setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
 setMethod("addFlag", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, default=NULL, optional=TRUE, help=NULL) {
-              name <- .checkArgLength(name, 1)
+              name <- .checkArgLen(name, 1)
               if ( !is.null(default) ) {
-                  default <- .checkArgLength(default, 1)
+                  default <- .checkArgLen(default, 1)
                   x@flags <- c(x@flags, setNames(default, name))
               } else {
                   x@flags <- c(x@flags, setNames(NA, name))
@@ -71,7 +78,7 @@ setMethod("addFlag", signature=c(x="ArgParser", name="character"),
               x@flags_alias <- c(x@flags_alias, setNames(ifelse(is.null(short), NA_character_, short), name))
               x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, name))
               if ( !is.null(help) ) {
-                  help <- .checkArgLength(help, 1)
+                  help <- .checkArgLen(help, 1)
                   x@help <- c(x@help, setNames(help, name))
               }
               validObject(x)
@@ -81,22 +88,22 @@ setMethod("addFlag", signature=c(x="ArgParser", name="character"),
 setGeneric("addSwitch", def=function(x, name, ...) standardGeneric("addSwitch"))
 setMethod("addSwitch", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, states=FALSE, help=NULL) {
-              name <- .checkArgLength(name, 1)
+              name <- .checkArgLen(name, 1)
               if ( !is.vector(states) ) 
                   stop("Value of states must be of type vector.")
               if ( is.logical(states) ) {
-                  states <- .checkArgLength(states, 1)
+                  states <- .checkArgLen(states, 1)
                   x@switches_logic <- c(x@switches_logic, setNames(states, name))
               } else {
                   if ( length(states) < 2 )
                       stop("Non-logical states vector should have length 2.")
-                  states <- .checkArgLength(states, 2)
+                  states <- .checkArgLen(states, 2)
                   names(states) <- c("unpushed", "pushed")
                   x@switches_any <- c(x@switches_any, setNames(list(as.list(states)), name))
               }
               x@switches_alias <- c(x@switches_alias, setNames(ifelse(is.null(short), NA_character_, short), name))
               if ( !is.null(help) ) {
-                  help <- .checkArgLength(help, 1)
+                  help <- .checkArgLen(help, 1)
                   x@help <- c(x@help, setNames(help, name))
               }
               validObject(x)
@@ -106,9 +113,9 @@ setMethod("addSwitch", signature=c(x="ArgParser", name="character"),
 setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
 setMethod("addOpt", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, help=NULL, narg=1L, nrequired=narg) {
-              name <- .checkArgLength(name, 1)
-              narg <- as.integer(.checkArgLength(narg, 1))
-              nrequired <- as.integer(.checkArgLength(nrequired, 1))
+              name <- .checkArgLen(name, 1)
+              narg <- as.integer(.checkArgLen(narg, 1))
+              nrequired <- as.integer(.checkArgLen(nrequired, 1))
               if ( nrequired > narg )
                   stop("Found nrequired > narg, which is impossible.")
               if ( nrequired < narg )
@@ -117,7 +124,7 @@ setMethod("addOpt", signature=c(x="ArgParser", name="character"),
               x@opt_narg <- c(x@opt_narg, setNames(narg, name))
               x@opt_nrequired <- c(x@opt_nrequired, setNames(nrequired, name))
               if ( !is.null(help) ) {
-                  help <- .checkArgLength(help, 1)
+                  help <- .checkArgLen(help, 1)
                   x@help <- c(x@help, setNames(help, name))
               }
               validObject(x)
@@ -140,7 +147,8 @@ setMethod(".parseFlag", signature=c(x="ArgParser", cmdargs="character"),
                   flags_with_alias <- x@flags_alias[alias_defined]
                   if ( any(is_alias <- cmdargs %in% flags_with_alias) ) {
                       alias_raised <- cmdargs[is_alias]
-                      cmdargs[cmdargs == alias_raised] <- names(which(x@flags_alias == alias_raised))
+                      for ( a in alias_raised ) 
+                          cmdargs[cmdargs == a] <- names(which(x@flags_alias == a))
                   }    
               }
 
@@ -150,6 +158,9 @@ setMethod(".parseFlag", signature=c(x="ArgParser", cmdargs="character"),
                       stop(sprintf("Missing forced flag(s): %s", 
                                    paste(forced_flags[!forced_and_raised], collapse=", ")))
               }
+
+              # check duplicated flag names
+              .checkDupArg(cmdargs, names(x@flags))
              
               if ( length(x@flags) ) {
                   with_default <- sapply(x@flags, function(x) !is.na(x))
@@ -207,6 +218,9 @@ setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
                       cmdargs[cmdargs == alias_raised] <- names(which(x@switches_alias == alias_raised))
                   }    
               }
+
+              # check duplicated switch names
+              .checkDupArg(cmdargs, c(names(x@switches_logic), names(x@switches_any)))
 
               # get overall switch position
               if ( !is.null(all_snames <- c(names(x@switches_logic), names(x@switches_any))) ) {
