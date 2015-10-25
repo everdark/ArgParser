@@ -97,10 +97,49 @@ test_that("flags with default can be properly overwriten", {
                            list(argv=list(`--flag1`="o1"), cmdargs_consumed=c("prog.R", 'a', 'b')))
 })
 
+p4 <- ArgParser() %>%
+    addFlag("--flag1", optional=FALSE) %>%
+    addFlag("--flag2", default="v2", optional=FALSE) %>%
+    addFlag("--flag3", "-f3", default="v3", optional=FALSE) %>%
+    addFlag("--flag4", "-f4")
 
+cmdargs18 <- getTestInput("prog.R --flag1 v1")
+cmdargs19 <- getTestInput("prog.R --flag1 v1 --flag2")
+cmdargs19 <- getTestInput("prog.R --flag2 o2 --flag3")
+cmdargs20 <- getTestInput("prog.R -f3")
+cmdargs21 <- getTestInput("prog.R --flag1 v1 -f4 v4")
+cmdargs22 <- getTestInput("prog.R --flag1 v1 --flag2 -f4 v4")
+cmdargs23 <- getTestInput("prog.R --flag2 o2 --flag3 -f4 v4")
+cmdargs24 <- getTestInput("prog.R -f3 -f4 v4")
 
+test_that("forced flags must be present; otherwise error is thrown", {
+          expect_error(.parseFlag(p4, cmdargs18))
+          expect_error(.parseFlag(p4, cmdargs19))
+          expect_error(.parseFlag(p4, cmdargs20))
+          expect_error(.parseFlag(p4, cmdargs21))
+          expect_error(.parseFlag(p4, cmdargs22))
+          expect_error(.parseFlag(p4, cmdargs23))
+          expect_error(.parseFlag(p4, cmdargs24))
+})
 
+p5 <- ArgParser() %>%
+    addFlag("--flag1", optional=FALSE) %>%
+    addFlag("--flag2", "-f2", optional=FALSE) %>%
+    addFlag("--flag3", default="v3", optional=FALSE) %>%
+    addFlag("--flag4", "-f4", default="v4") %>%
+    addFlag("--flag5")
 
+cmdargs25 <- getTestInput("prog.R --flag1 v1 -f2 v2 --flag3 -f4 o4 --flag5 v5")
+
+test_that("all components work together properly", {
+          expect_identical(.parseFlag(p5, cmdargs25), 
+                           list(argv=list(`--flag1`="v1",
+                                          `--flag2`="v2",
+                                          `--flag5`="v5",
+                                          `--flag3`="v3",
+                                          `--flag4`="o4"), 
+                                cmdargs_consumed="prog.R"))
+})
 
 
 
