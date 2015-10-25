@@ -17,6 +17,18 @@ test_that("flags without default value are properly consumed", {
                            list(argv=list(`--f1`="v1", `--f2`="v2"), cmdargs_consumed="prog.R"))
 })
 
+cmdargs2_1 <- getTestInput("prog.R --f1")
+cmdargs2_2 <- getTestInput("prog.R --f1 v1 --f2")
+cmdargs2_3 <- getTestInput("prog.R --f1 --f2")
+cmdargs2_4 <- getTestInput("prog.R --f1 --f2 v2")
+
+test_that("flags without default value must be supplied value; otherwise error is thrown", {
+          expect_error(.parseFlag(p1, cmdargs2_1))
+          expect_error(.parseFlag(p1, cmdargs2_2))
+          expect_error(.parseFlag(p1, cmdargs2_3))
+          expect_error(.parseFlag(p1, cmdargs2_4))
+})
+
 p2 <- ArgParser() %>%
     addFlag("--flag1") %>%
     addFlag("--flag2", "-f2") %>%
@@ -41,7 +53,6 @@ test_that("flags with alias and without default are properly consumed", {
                            list(argv=list(`--flag2`="v2", `--flag3`="v3"), cmdargs_consumed=c("prog.R", 'a', 'b')))
 })
 
-
 cmdargs8 <- getTestInput("prog.R -f2 v2 -f2 v3")
 cmdargs9 <- getTestInput("prog.R --flag2 v2 -f2 v3")
 cmdargs10 <- getTestInput("prog.R --flag2 v2 --flag2 v3")
@@ -51,6 +62,44 @@ test_that("duplicated flag names and/or alias cause error", {
           expect_error(.parsedFlag(p2, cmdargs9))
           expect_error(.parsedFlag(p2, cmdargs10))
 })
+
+p3 <- ArgParser() %>%
+    addFlag("--flag1", default="v1") %>%
+    addFlag("--flag2", "-f2", default="v2") %>%
+    addFlag("--flag3", "-f3", default="v3")
+
+cmdargs11 <- getTestInput("prog.R --flag1")
+cmdargs12 <- getTestInput("prog.R --flag1 --flag2")
+cmdargs13 <- getTestInput("prog.R --flag2 --flag1")
+
+test_that("flags with default are properly consumed", {
+          expect_identical(.parseFlag(p3, cmdargs11), 
+                           list(argv=list(`--flag1`="v1"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p3, cmdargs12), 
+                           list(argv=list(`--flag1`="v1", `--flag2`="v2"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p3, cmdargs13), 
+                           list(argv=list(`--flag1`="v1", `--flag2`="v2"), cmdargs_consumed="prog.R"))
+})
+
+cmdargs14 <- getTestInput("prog.R --flag1 o1")
+cmdargs15 <- getTestInput("prog.R --flag1 --flag2 o2")
+cmdargs16 <- getTestInput("prog.R --flag2 --flag1 o1")
+cmdargs17 <- getTestInput("prog.R a --flag1 o1 b")
+
+test_that("flags with default can be properly overwriten", {
+          expect_identical(.parseFlag(p3, cmdargs14), 
+                           list(argv=list(`--flag1`="o1"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p3, cmdargs15), 
+                           list(argv=list(`--flag1`="v1", `--flag2`="o2"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p3, cmdargs16), 
+                           list(argv=list(`--flag1`="o1", `--flag2`="v2"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p3, cmdargs17), 
+                           list(argv=list(`--flag1`="o1"), cmdargs_consumed=c("prog.R", 'a', 'b')))
+})
+
+
+
+
 
 
 
