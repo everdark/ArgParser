@@ -1,0 +1,57 @@
+
+context("Parse flags in command line argument string")
+
+getTestInput <- function(x) strsplit(x, ' ')[[1]]
+
+p1 <- ArgParser() %>%
+    addFlag("--f1") %>%
+    addFlag("--f2")
+
+cmdargs1 <- getTestInput("prog.R --f1 v1")
+cmdargs2 <- getTestInput("prog.R --f1 v1 --f2 v2")
+
+test_that("flags without default value are properly consumed", {
+          expect_identical(.parseFlag(p1, cmdargs1), 
+                           list(argv=list(`--f1`="v1"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p1, cmdargs2), 
+                           list(argv=list(`--f1`="v1", `--f2`="v2"), cmdargs_consumed="prog.R"))
+})
+
+p2 <- ArgParser() %>%
+    addFlag("--flag1") %>%
+    addFlag("--flag2", "-f2") %>%
+    addFlag("--flag3", "-f3")
+
+cmdargs3 <- getTestInput("prog.R --flag1 v1")
+cmdargs4 <- getTestInput("prog.R --flag1 v1 --flag2 v2 -f3 v3")
+cmdargs5 <- getTestInput("prog.R a --flag3 v3 b --flag2 v2 c")
+cmdargs6 <- getTestInput("prog.R -f2 v2 -f3 v3")
+cmdargs7 <- getTestInput("prog.R a -f2 v2 b -f3 v3")
+
+test_that("flags with alias and without default are properly consumed", {
+          expect_identical(.parseFlag(p2, cmdargs3), 
+                           list(argv=list(`--flag1`="v1"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p2, cmdargs4), 
+                           list(argv=list(`--flag1`="v1", `--flag2`="v2", `--flag3`="v3"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p2, cmdargs5), 
+                           list(argv=list(`--flag2`="v2", `--flag3`="v3"), cmdargs_consumed=c("prog.R", 'a' ,'b', 'c')))
+          expect_identical(.parseFlag(p2, cmdargs6), 
+                           list(argv=list(`--flag2`="v2", `--flag3`="v3"), cmdargs_consumed="prog.R"))
+          expect_identical(.parseFlag(p2, cmdargs7), 
+                           list(argv=list(`--flag2`="v2", `--flag3`="v3"), cmdargs_consumed=c("prog.R", 'a', 'b')))
+})
+
+
+cmdargs8 <- getTestInput("prog.R -f2 v2 -f2 v3")
+cmdargs9 <- getTestInput("prog.R --flag2 v2 -f2 v3")
+cmdargs10 <- getTestInput("prog.R --flag2 v2 --flag2 v3")
+
+test_that("duplicated flag names and/or alias cause error", {
+          expect_error(.parsedFlag(p2, cmdargs8))
+          expect_error(.parsedFlag(p2, cmdargs9))
+          expect_error(.parsedFlag(p2, cmdargs10))
+})
+
+
+
+

@@ -52,9 +52,9 @@ test_that("optional flags not found should be okay", {
 cmdargs9 <- getTestInput("prog.R --f1 v1 --f1 v2")
 cmdargs10 <- getTestInput("prog.R --f1 v1 --f2 v1 --f1 v2 --f2 v2")
 
-test_that("duplicated flags will be ignored, only the first matched remains", {
-          expect_identical(parseCommandLine(argParser1, cmdargs9), list(`--f1`="v1", `--help`=FALSE))
-          expect_identical(parseCommandLine(argParser1, cmdargs10), list(`--f1`="v1", `--f2`="v1", `--help`=FALSE))
+test_that("duplicated flags cause error", {
+          expect_error(parseCommandLine(argParser1, cmdargs9))
+          expect_error(parseCommandLine(argParser1, cmdargs10))
 })
 
 #--------------------------------------------#
@@ -85,8 +85,8 @@ test_that("flags with default value should be overwritten if well followed by va
 
 cmdargs16 <- getTestInput("prog.R --f1 v1 --f1 v2")
 
-test_that("duplicated flags with default value should be ignored, only first matched remains", {
-          expect_identical(parseCommandLine(argParser2, cmdargs16), list(`--f1`="v1", `--help`=FALSE))
+test_that("duplicated flags with default value cause error", {
+          expect_error(parseCommandLine(argParser2, cmdargs16))
 })
 
 #-------------------#
@@ -138,7 +138,7 @@ test_that("forced flag not raised will cause error", {
 
 cmdargs24 <- getTestInput("prog.R --f2 v2 --f3 --f2 v20")
 
-test_that("duplicated forced flags are ignored, only the first matched remains", {
-          expect_identical(parseCommandLine(argParser4, cmdargs24), list(`--f2`="v2", `--f3`="f3_default", `--help`=FALSE))
+test_that("duplicated forced flags cause error", {
+          expect_error(parseCommandLine(argParser4, cmdargs24))
 })
 
