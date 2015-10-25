@@ -29,6 +29,13 @@ test_that("flags without default value must be supplied value; otherwise error i
           expect_error(.parseFlag(p1, cmdargs2_4))
 })
 
+cmdargs2_5 <- getTestInput("prog.R a b c")
+
+test_that("command line string without any flag can be properly by-passed", {
+          expect_identical(.parseFlag(p1, cmdargs2_5), 
+                           list(argv=list(), cmdargs_consumed=c("prog.R", 'a', 'b', 'c')))
+})
+
 p2 <- ArgParser() %>%
     addFlag("--flag1") %>%
     addFlag("--flag2", "-f2") %>%
@@ -58,9 +65,9 @@ cmdargs9 <- getTestInput("prog.R --flag2 v2 -f2 v3")
 cmdargs10 <- getTestInput("prog.R --flag2 v2 --flag2 v3")
 
 test_that("duplicated flag names and/or alias cause error", {
-          expect_error(.parsedFlag(p2, cmdargs8))
-          expect_error(.parsedFlag(p2, cmdargs9))
-          expect_error(.parsedFlag(p2, cmdargs10))
+          expect_error(.parseFlag(p2, cmdargs8))
+          expect_error(.parseFlag(p2, cmdargs9))
+          expect_error(.parseFlag(p2, cmdargs10))
 })
 
 p3 <- ArgParser() %>%
