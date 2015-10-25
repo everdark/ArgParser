@@ -180,13 +180,6 @@ setMethod(".parseFlag", signature=c(x="ArgParser", cmdargs="character"),
                   # parse flags with default value
                   f2 <- names(x@flags[with_default])
                   if ( length(f2_raised <- f2[f2 %in% cmdargs]) ) {
-                      # f2_idx <- match(f2_raised, cmdargs)
-                      # parsed <- c(parsed, x@flags[f2_raised])
-                      # f2_value <- setNames(cmdargs[f2_idx + 1L], f2_raised)
-                      # not_a_value <- f2_value %in% c(allargs, NA)
-                      # f2_overwrite_value <- f2_value[!not_a_value]
-                      # parsed[names(f2_overwrite_value)] <- f2_overwrite_value
-                      # flag_kv_idx <- c(flag_kv_idx, f2_idx, )
                       parsed <- c(parsed, x@flags[f2_raised])
                       for ( f in f2_raised ) {
                           v_idx <- match(f, cmdargs) + 1L
