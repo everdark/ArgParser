@@ -208,7 +208,8 @@ setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
                   switches_with_alias <- x@switches_alias[alias_defined]
                   if ( any(is_alias <- cmdargs %in% switches_with_alias) ) {
                       alias_raised <- cmdargs[is_alias]
-                      cmdargs[cmdargs == alias_raised] <- names(which(x@switches_alias == alias_raised))
+                      for ( a in alias_raised ) 
+                          cmdargs[cmdargs == a] <- names(which(x@switches_alias == a))
                   }    
               }
 
@@ -230,11 +231,11 @@ setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
 
               # parse ad-hoc switches pushed
               if ( any(pushed <- names(x@switches_any) %in% cmdargs) )
-                  parsed <- c(parsed, sapply(x@switches_any[pushed], function(x) x[[2]]))
+                  parsed <- c(parsed, lapply(x@switches_any[pushed], function(x) x[[2]]))
 
               # parse ad-hoc switches not pushed
               if ( any(unpushed <- !names(x@switches_any) %in% cmdargs) )
-                  parsed <- c(parsed, sapply(x@switches_any[unpushed], function(x) x[[1]]))
+                  parsed <- c(parsed, lapply(x@switches_any[unpushed], function(x) x[[1]]))
               
               list(argv=parsed,
                    cmdargs_consumed=if (length(switch_idx)) cmdargs[-switch_idx] else cmdargs)
