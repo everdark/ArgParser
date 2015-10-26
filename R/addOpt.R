@@ -5,6 +5,12 @@ NULL
 #' 
 #' @param x An ArgParser object.
 #' @param name Character vector of the opt name. Should be of length 1.
+#' @param ... Other arguments used in dispatched method.
+
+#' @export
+setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
+
+#' @describeIn addOpt
 #' @param help Optional character vector shown in usage for the opt. If any, should be of length 1.
 #' @param narg Optinal number of arguments to be consumed.
 #' @param nrequired Optional number of arguments required to be consumed.
@@ -14,11 +20,6 @@ NULL
 #' p <- addOpt(p, "filename")
 
 #' @export
-
-setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
-
-#' @export
-
 setMethod("addOpt", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, help=NULL, narg=1L, nrequired=narg) {
               name <- .checkArgLen(name, 1)

@@ -5,6 +5,12 @@ NULL
 #' 
 #' @param x An ArgParser object.
 #' @param name Character vector of the flag name. Should be of length 1 and prefixed with "-{}-".
+#' @param ... Other arguments used in dispatched method.
+
+#' @export
+setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
+
+#' @describeIn addFlag
 #' @param short Optional alias for the flag. Should be of length 1 and prefixed with "-".
 #' @param default Optional default value. If any, Should be of length 1.
 #' @param optional Optional logical vector of length 1. Is the flag optional?
@@ -15,11 +21,6 @@ NULL
 #' p <- addFlag(p, "--flag", "-f")
 
 #' @export
-
-setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
-
-#' @export
-
 setMethod("addFlag", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, default=NULL, optional=TRUE, help=NULL) {
               name <- .checkArgLen(name, 1)

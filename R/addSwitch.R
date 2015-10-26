@@ -5,6 +5,12 @@ NULL
 #' 
 #' @param x An ArgParser object.
 #' @param name Character vector of the switch name. Should be of length 1 and prefixed with "-{}-".
+#' @param ... Other arguments used in dispatched method.
+
+#' @export
+setGeneric("addSwitch", def=function(x, name, ...) standardGeneric("addSwitch"))
+
+#' @describeIn addSwitch
 #' @param short Optional alias for the switch. Should be of length 1 and prefixed with "-".
 #' @param states Optional states of unpushed/pushed in list of length 2, or a logical vector of length 1 with the unpushed state. 
 #' @param help Optional character vector shown in usage for the switch. If any, should be of length 1.
@@ -15,11 +21,6 @@ NULL
 #' p <- addSwitch(p, "--switch-any", "-s2", list(0, 1))
 
 #' @export
-
-setGeneric("addSwitch", def=function(x, name, ...) standardGeneric("addSwitch"))
-
-#' @export
-
 setMethod("addSwitch", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, states=FALSE, help=NULL) {
               name <- .checkArgLen(name, 1)
