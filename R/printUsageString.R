@@ -1,5 +1,5 @@
 
-setGeneric("printUsageString", def=function(x, cmdargs, ...) standardGeneric(".printUsageString"))
+setGeneric("printUsageString", def=function(x, cmdargs, ...) standardGeneric("printUsageString"))
 
 setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
           definition=function(x, cmdargs, align=TRUE) {
