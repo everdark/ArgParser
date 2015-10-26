@@ -1,7 +1,7 @@
 
-setGeneric(".parseOpt", def=function(x, cmdargs_consumed) standardGeneric(".parseOpt"))
+setGeneric("parseOpt", def=function(x, cmdargs_consumed) standardGeneric("parseOpt"))
 
-setMethod(".parseOpt", signature=c(x="ArgParser", cmdargs_consumed="character"),
+setMethod("parseOpt", signature=c(x="ArgParser", cmdargs_consumed="character"),
           definition=function(x, cmdargs_consumed) {
               parsed <- list()
               if ( length(x@opt) ) {

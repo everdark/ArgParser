@@ -1,7 +1,7 @@
 
-setGeneric(".parseSwitch", def=function(x, cmdargs) standardGeneric(".parseSwitch"))
+setGeneric("parseSwitch", def=function(x, cmdargs) standardGeneric("parseSwitch"))
 
-setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
+setMethod("parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
           definition=function(x, cmdargs) {
 
               parsed <- list()

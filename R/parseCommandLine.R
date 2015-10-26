@@ -26,7 +26,7 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
 
               ## print usage then exit if --help is raised
               if ( any(c("--help", "-h") %in% cmdargs) ) {
-                  .printUsageString(x, cmdargs)
+                  printUsageString(x, cmdargs)
                   quit(status=0)
               }
               
@@ -34,11 +34,11 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
               all_argnames <- c(names(x@flags), names(x@switches_logic), names(x@switches_any))
 
               ## parse flags
-              parsed_flags <- .parseFlag(x=x, cmdargs=cmdargs)
+              parsed_flags <- parseFlag(x=x, cmdargs=cmdargs)
               parsed <- c(parsed, parsed_flags$argv)
 
               ## parse switches
-              parsed_switches <- .parseSwitch(x=x, cmdargs=parsed_flags$cmdargs_consumed)
+              parsed_switches <- parseSwitch(x=x, cmdargs=parsed_flags$cmdargs_consumed)
               parsed <- c(parsed, parsed_switches$argv)
 
               ## parse positional args (opt)
@@ -47,7 +47,7 @@ setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"),
               } else {
                   cmdargs_consumed <- parsed_switches$cmdargs_consumed
               }
-              parsed_opt <- .parseOpt(x=x, cmdargs_consumed=cmdargs_consumed)
+              parsed_opt <- parseOpt(x=x, cmdargs_consumed=cmdargs_consumed)
               parsed <- c(parsed, parsed_opt)
 
               if ( trim_prefix )
