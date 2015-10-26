@@ -4,19 +4,54 @@
 \name{ArgParser-class}
 \alias{ArgParser}
 \alias{ArgParser-class}
+\alias{initialize,ArgParser-method}
 \title{An S4 class to represent a command line arguments parser.}
+\usage{
+\S4method{initialize}{ArgParser}(.Object, desc = "", prog = "")
+}
+\arguments{
+\item{.Object}{A prototyped object of class ArgParser.}
+
+\item{desc}{A description shown in usage. desc with length > 1 will be printed in seperated lines.}
+
+\item{prog}{A program name shown in usage, if not set, will default to the value of "--file=" flag given in commandArg().}
+}
 \value{
-An S4 object of class ArgParser
+An S4 object of class ArgParser.
 }
 \description{
 An S4 class to represent a command line arguments parser.
 }
+\section{Methods (by generic)}{
+\itemize{
+\item \code{initialize}: The Constructer used for class ArgParser.
+}}
 \section{Slots}{
 
 \describe{
 \item{\code{desc}}{A description shown in usage. desc with length > 1 will be printed in seperated lines.}
 
 \item{\code{prog}}{A program name shown in usage, if not set, will default to the value of "--file=" flag given in commandArg().}
+
+\item{\code{flags}}{A list of defined flag arguments.}
+
+\item{\code{flags_alias}}{A character vector of defined flag alias.}
+
+\item{\code{flags_isOptional}}{A logical vector indicating wheather a flag is optional or not.}
+
+\item{\code{switches_logic}}{A logical vector of defined logical switch arguments.}
+
+\item{\code{switches_any}}{A list of defined ad-hoc switch arguments.}
+
+\item{\code{switches_alias}}{A character vector of defined switch alias.}
+
+\item{\code{opt}}{A character vector of defined positional arguments.}
+
+\item{\code{opt_narg}}{An integer vector indicating the number of positinal arguments to consume for each opt.}
+
+\item{\code{opt_nrequired}}{An integer vector indicating the number of required positional arguments to consume for each opt.}
+
+\item{\code{help}}{A character vector of defined help message for each argument.}
 }}
 \examples{
 p1 <- ArgParser(desc="a test description", prog="test.R")

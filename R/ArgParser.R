@@ -1,11 +1,20 @@
+#' @importFrom methods setClass setGeneric setMethod
+NULL
+
 #' An S4 class to represent a command line arguments parser.
 #' 
 #' @slot desc A description shown in usage. desc with length > 1 will be printed in seperated lines.
 #' @slot prog A program name shown in usage, if not set, will default to the value of "--file=" flag given in commandArg().
-#' @return An S4 object of class ArgParser
-#' @examples
-#' p1 <- ArgParser(desc="a test description", prog="test.R")
-#' p2 <- ArgParser(desc=c("a test description", "that can have multiple lines"))
+#' @slot flags A list of defined flag arguments.
+#' @slot flags_alias A character vector of defined flag alias.
+#' @slot flags_isOptional A logical vector indicating wheather a flag is optional or not.
+#' @slot switches_logic A logical vector of defined logical switch arguments.
+#' @slot switches_any A list of defined ad-hoc switch arguments.
+#' @slot switches_alias A character vector of defined switch alias.
+#' @slot opt A character vector of defined positional arguments.
+#' @slot opt_narg An integer vector indicating the number of positinal arguments to consume for each opt.
+#' @slot opt_nrequired An integer vector indicating the number of required positional arguments to consume for each opt.
+#' @slot help A character vector of defined help message for each argument.
 
 #' @export ArgParser
 #' @exportClass ArgParser
@@ -44,6 +53,18 @@ ArgParser <- setClass("ArgParser",
                           TRUE
                       })
 
+#' @describeIn ArgParser
+#' The Constructer used for class ArgParser.
+#'
+#' @param .Object A prototyped object of class ArgParser.
+#' @param desc A description shown in usage. desc with length > 1 will be printed in seperated lines.
+#' @param prog A program name shown in usage, if not set, will default to the value of "--file=" flag given in commandArg().
+#' @return An S4 object of class ArgParser.
+#' @examples
+#' p1 <- ArgParser(desc="a test description", prog="test.R")
+#' p2 <- ArgParser(desc=c("a test description", "that can have multiple lines"))
+
+#' @export
 setMethod("initialize", signature="ArgParser", 
           definition=function(.Object, desc='', prog='') {
               prog <- .checkArgLen(prog, 1)
