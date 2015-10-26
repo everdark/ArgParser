@@ -10,9 +10,10 @@ Imports:
 Suggests:
     magrittr (>= 1.5),
     testthat (>= 0.10)
-License: What license is it under?
+License: MIT + file LICENSE
 LazyData: true
 URL: https://github.com/everdark/ArgParser
+BugReports: https://github.com/everdark/ArgParser/issues
 Collate:
     'ArgParser.R'
     'addFlag.R'
