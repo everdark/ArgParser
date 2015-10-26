@@ -8,7 +8,7 @@ command line argument parser for R, implemented in S4
 
 library(methods)
 library(magrittr)
-source("ArgParser.R")
+invisible(sapply(dir("./R", full.names=T), source))
 p <- ArgParser(desc="A test for ArgParser") %>% 
     addFlag("--flag1", "-f1", help="this is an optional flag") %>%
     addFlag("--flag2", help="this is an optional flag with default value", default="f1d") %>%
