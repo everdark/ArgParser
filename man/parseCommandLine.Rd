@@ -21,10 +21,10 @@ Parse command line arguments via given ArgParser.
 }
 \examples{
 library(magrittr)
-cmdargs <- strsplit(addFlag("--f1") \%>\%"prog.R --f1 v1", ' ')[[1]]
+cmdargs <- strsplit("prog.R --f1 v1", ' ')[[1]]
 p <- ArgParser() \%>\%
    addFlag("--f1") \%>\%
    addFlag("--f2")
-parseCommandLine(p, cmdargs)
+parseCommandLine(p, cmdargs=cmdargs)
 }
 

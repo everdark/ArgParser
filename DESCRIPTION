@@ -5,6 +5,8 @@ Authors@R: person("Kyle", "Chung", email = "kylechun9@gmail.com", role = c("aut"
 Description: A command line arguments parser implemented in S4.
 Depends:
     R (>= 3.2.0)
+Imports:
+    methods
 Suggests:
     magrittr (>= 1.5),
     testthat (>= 0.10)

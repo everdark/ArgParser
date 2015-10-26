@@ -1,4 +1,6 @@
 
+library(methods)
+
 setGeneric(".parseFlag", def=function(x, cmdargs) standardGeneric(".parseFlag"))
 
 setMethod(".parseFlag", signature=c(x="ArgParser", cmdargs="character"),

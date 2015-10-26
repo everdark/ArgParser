@@ -1,4 +1,6 @@
 
+library(methods)
+
 setGeneric(".printUsageString", def=function(x, cmdargs, ...) standardGeneric(".printUsageString"))
 
 setMethod(".printUsageString", signature=c(x="ArgParser", cmdargs="character"),

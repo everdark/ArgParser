@@ -1,6 +1,8 @@
 #' @include ArgParser.R
 NULL
 
+library(methods)
+
 #' Add flag argument to parser.
 #' 
 #' @param x An ArgParser object.
