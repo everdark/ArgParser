@@ -1,7 +1,7 @@
 
 
 
-context("Add switches onto ArgParser instance")
+context("Add positional args onto ArgParser instance")
 
 test_that("name definition of length > 1 will be warned, and the first one kept", {
           expect_warning(ArgParser() %>% addOpt(c("opt1", "opt2")))
