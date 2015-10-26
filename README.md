@@ -1,6 +1,11 @@
 # ArgParser
 command line argument parser for R, implemented in S4
 
+## Installation
+```R
+devtools::install_github("everdark/ArgParser")
+```
+
 ## Example Use
 + Declare the parser in `test.R` as the following:
 ```R
