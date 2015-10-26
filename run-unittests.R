@@ -4,6 +4,6 @@ library(methods)
 library(testthat)
 library(magrittr)
 
-source("ArgParser.R")
+invisible(sapply(dir("./R", full.names=TRUE), source))
 
-test_dir("unittests", reporter="summary")
+test_dir("tests/testthat", reporter="summary")

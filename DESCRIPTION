@@ -1,0 +1,22 @@
+Package: ArgParser
+Title: Command Line Arguments Parser
+Version: 0.1
+Authors@R: person("Kyle", "Chung", email = "kylechun9@gmail.com", role = c("aut", "cre"))
+Description: A command line arguments parser implemented in S4.
+Depends:
+    R (>= 3.2.0)
+Suggests:
+    magrittr (>= 1.5),
+    testthat (>= 0.10)
+License: What license is it under?
+LazyData: true
+URL: https://github.com/everdark/ArgParser
+Collate:
+    'ArgParser.R'
+    'addFlag.R'
+    'addOpt.R'
+    'addSwitch.R'
+    'parseFlag.R'
+    'parseOpt.R'
+    'parseSwitch.R'
+    'utils.R'
