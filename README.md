@@ -1,5 +1,5 @@
 # ArgParser
-command line argument parser for R, implemented in S4
+Inspired by the module `argparse` in python, a command line argument parser for R, implemented in S4 without external dependency. Still in beta!
 
 ## Installation
 ```R
