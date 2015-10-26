@@ -15,7 +15,11 @@ NULL
 #'    addFlag("--f2")
 #' parseCommandLine(p, cmdargs=cmdargs)
 
+#' @export
+
 setGeneric("parseCommandLine", def=function(x, cmdargs, ...) standardGeneric("parseCommandLine"))
+
+#' @export
 
 setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"), 
           definition=function(x, cmdargs=commandArgs(), trim_prefix=FALSE) {

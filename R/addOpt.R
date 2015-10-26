@@ -13,7 +13,12 @@ NULL
 #' p <- ArgParser("a test parser")
 #' p <- addOpt(p, "filename")
 
+#' @export
+
 setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
+
+#' @export
+
 setMethod("addOpt", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, help=NULL, narg=1L, nrequired=narg) {
               name <- .checkArgLen(name, 1)

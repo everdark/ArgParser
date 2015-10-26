@@ -14,7 +14,11 @@ NULL
 #' p <- ArgParser("a test parser")
 #' p <- addFlag(p, "--flag", "-f")
 
+#' @export
+
 setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
+
+#' @export
 
 setMethod("addFlag", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, default=NULL, optional=TRUE, help=NULL) {

@@ -14,7 +14,12 @@ NULL
 #' p <- addSwitch(p, "--switch-logic", "-s1", FALSE)
 #' p <- addSwitch(p, "--switch-any", "-s2", list(0, 1))
 
+#' @export
+
 setGeneric("addSwitch", def=function(x, name, ...) standardGeneric("addSwitch"))
+
+#' @export
+
 setMethod("addSwitch", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, states=FALSE, help=NULL) {
               name <- .checkArgLen(name, 1)

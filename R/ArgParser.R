@@ -7,6 +7,8 @@
 #' p1 <- ArgParser(desc="a test description", prog="test.R")
 #' p2 <- ArgParser(desc=c("a test description", "that can have multiple lines"))
 
+#' @export ArgParser
+#' @exportClass ArgParser
 ArgParser <- setClass("ArgParser", 
                       slots=c(desc="character",
                               prog="character",
