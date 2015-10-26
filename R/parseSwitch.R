@@ -1,6 +1,4 @@
 
-library(methods)
-
 setGeneric(".parseSwitch", def=function(x, cmdargs) standardGeneric(".parseSwitch"))
 
 setMethod(".parseSwitch", signature=c(x="ArgParser", cmdargs="character"),

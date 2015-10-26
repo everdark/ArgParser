@@ -1,8 +1,6 @@
 #' @include ArgParser.R
 NULL
 
-library(methods)
-
 #' Parse command line arguments via given ArgParser.
 #' 
 #' @param x An ArgParser object.

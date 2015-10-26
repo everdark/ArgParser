@@ -1,5 +1,3 @@
-library(methods)
-
 #' An S4 class to represent a command line arguments parser.
 #' 
 #' @slot desc A description shown in usage. desc with length > 1 will be printed in seperated lines.

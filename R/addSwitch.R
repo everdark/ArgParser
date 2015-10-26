@@ -1,8 +1,6 @@
 #' @include ArgParser.R
 NULL
 
-library(methods)
-
 #' Add switch argument to parser.
 #' 
 #' @param x An ArgParser object.
