@@ -1,7 +1,23 @@
+#' @include ArgParser.R
+NULL
 
-setGeneric("parseCommandLine", def=function(x, ...) standardGeneric("parseCommandLine"))
+#' Parse command line arguments via given ArgParser.
+#' 
+#' @param x An ArgParser object.
+#' @param cmdargs A character vector representing command line arguments.
+#' @param trim_prefix A logical vector indicating wheather to strip dash prefix in argument names in parsed result.
+#' @return A list of parsed command line arguments.
+#' @examples
+#' library(magrittr)
+#' cmdargs <- strsplit(addFlag("--f1") %>%"prog.R --f1 v1", ' ')[[1]]
+#' p <- ArgParser() %>%
+#'    addFlag("--f1") %>%
+#'    addFlag("--f2")
+#' parseCommandLine(p, cmdargs)
 
-setMethod("parseCommandLine", signature=c(x="ArgParser"), 
+setGeneric("parseCommandLine", def=function(x, cmdargs, ...) standardGeneric("parseCommandLine"))
+
+setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"), 
           definition=function(x, cmdargs=commandArgs(), trim_prefix=FALSE) {
 
               ## print usage then exit if --help is raised
