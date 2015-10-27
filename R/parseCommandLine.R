@@ -4,13 +4,13 @@ NULL
 #' Parse command line arguments via given ArgParser.
 #' 
 #' @param x An ArgParser object.
-#' @param cmdargs A character vector representing command line arguments.
 #' @param ... Other arguments used in dispatched method.
 
 #' @export
-setGeneric("parseCommandLine", def=function(x, cmdargs, ...) standardGeneric("parseCommandLine"))
+setGeneric("parseCommandLine", def=function(x, ...) standardGeneric("parseCommandLine"))
 
 #' @describeIn parseCommandLine
+#' @param cmdargs A character vector representing command line arguments.
 #' @param trim_prefix A logical vector indicating wheather to strip dash prefix in argument names in parsed result.
 #' @return A list of parsed command line arguments.
 #' @examples
@@ -22,7 +22,7 @@ setGeneric("parseCommandLine", def=function(x, cmdargs, ...) standardGeneric("pa
 #' parseCommandLine(p, cmdargs=cmdargs)
 
 #' @export
-setMethod("parseCommandLine", signature=c(x="ArgParser", cmdargs="character"), 
+setMethod("parseCommandLine", signature=c(x="ArgParser"), 
           definition=function(x, cmdargs=commandArgs(), trim_prefix=FALSE) {
 
               ## print usage then exit if --help is raised

@@ -3,20 +3,20 @@
 \docType{methods}
 \name{parseCommandLine}
 \alias{parseCommandLine}
-\alias{parseCommandLine,ArgParser,character-method}
+\alias{parseCommandLine,ArgParser-method}
 \title{Parse command line arguments via given ArgParser.}
 \usage{
-parseCommandLine(x, cmdargs, ...)
+parseCommandLine(x, ...)
 
-\S4method{parseCommandLine}{ArgParser,character}(x, cmdargs = commandArgs(),
+\S4method{parseCommandLine}{ArgParser}(x, cmdargs = commandArgs(),
   trim_prefix = FALSE)
 }
 \arguments{
 \item{x}{An ArgParser object.}
 
-\item{cmdargs}{A character vector representing command line arguments.}
-
 \item{...}{Other arguments used in dispatched method.}
+
+\item{cmdargs}{A character vector representing command line arguments.}
 
 \item{trim_prefix}{A logical vector indicating wheather to strip dash prefix in argument names in parsed result.}
 }
@@ -28,7 +28,7 @@ Parse command line arguments via given ArgParser.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{x = ArgParser,cmdargs = character}: 
+\item \code{ArgParser}: 
 }}
 \examples{
 library(magrittr)
