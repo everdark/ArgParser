@@ -53,7 +53,7 @@ setMethod("parseCommandLine", signature=c(x="ArgParser"),
               if ( !opt_supplied && length(x@opt) && any(x@opt_nrequired > 0) )
                   stop("No positional argument found.")              
               parsed_opt <- parseOpt(x=x, cmdargs_consumed=cmdargs_consumed)
-              parsed <- c(parsed, parsed_opt)
+              parsed <- c(parsed, parsed_opt$argv)
 
               if ( trim_prefix )
                   names(parsed) <- gsub("^--", '', names(parsed))

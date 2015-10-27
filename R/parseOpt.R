@@ -13,7 +13,8 @@ setMethod("parseOpt", signature=c(x="ArgParser", cmdargs_consumed="character"),
                       cmdargs_consumed <- cmdargs_consumed[-to_narg]
                   }
               }
-              parsed
+              list(argv=parsed,
+                   cmdargs_consumed=cmdargs_consumed)
           })
 
 
