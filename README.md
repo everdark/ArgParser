@@ -1,5 +1,6 @@
 # ArgParser
-Inspired by the module `argparse` in python, a command line argument parser for R, implemented in S4 without external dependency. Still in beta!
+Inspired by the module `argparse` in python, a command line argument parser for R, implemented in S4 without external dependency. 
+Still in beta!
 
 ## Installation
 ```R
@@ -24,6 +25,15 @@ There are three types of command line arguments defined in `ArgParser`:
     + one opt can optionally consume more than one string
 
 ## Usage
+### Initialization
+Initialize a parser by `ArgParser`. For example: `p <- ArgParser(desc="test a parser")`. 
+The returned object is an S4 class instance with various slots. 
+The initializer has been customized so that only slot `desc` and `prog` can be init.
+However, users can still alter slots content at any time via the S4 replace function `@<-`.
+Please don't do this since that may break the mechanism of the parser. 
+Instead, use adder methods (`addFlag`, `addSwitch`, and `addOpt`) to add arguments onto your parser. 
+These methods will update slots with proper manner in order to make the whole things work.
+
 ### Flag
 Use `addFlag` to define flag argument to your parser.
 
@@ -73,7 +83,9 @@ $`--help`
 ```
 
 ### Switch
-Use `addSwitch` to define switch argument to your parser. The `states` argument should be of length 2 if not a logical vector, where the first element corresponds to the "unpushed" state (i.e., the switch is not present in the given command line string) and the second "pushed" state.
+Use `addSwitch` to define switch argument to your parser. 
+The `states` argument should be of length 2 if not a logical vector, where the first element corresponds to the "unpushed" state 
+(i.e., the switch is not present in the given command line string) and the second "pushed" state.
 
 ```R
 #!/usr/bin/env Rscript
