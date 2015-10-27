@@ -14,7 +14,7 @@
 
 \item{desc}{A description shown in usage. desc with length > 1 will be printed in seperated lines.}
 
-\item{prog}{A program name shown in usage, if not set, will default to the value of "--file=" flag given in commandArg().}
+\item{prog}{A program name shown in usage, if not set, will default to the value of "-{}-file=" flag given in commandArg().}
 }
 \value{
 An S4 object of class ArgParser.
@@ -31,7 +31,7 @@ An S4 class to represent a command line arguments parser.
 \describe{
 \item{\code{desc}}{A description shown in usage. desc with length > 1 will be printed in seperated lines.}
 
-\item{\code{prog}}{A program name shown in usage, if not set, will default to the value of "--file=" flag given in commandArg().}
+\item{\code{prog}}{A program name shown in usage, if not set, will default to the value of "-{}-file=" flag given in commandArg().}
 
 \item{\code{flags}}{A list of defined flag arguments.}
 

@@ -4,7 +4,7 @@ NULL
 #' An S4 class to represent a command line arguments parser.
 #' 
 #' @slot desc A description shown in usage. desc with length > 1 will be printed in seperated lines.
-#' @slot prog A program name shown in usage, if not set, will default to the value of "--file=" flag given in commandArg().
+#' @slot prog A program name shown in usage, if not set, will default to the value of "-{}-file=" flag given in commandArg().
 #' @slot flags A list of defined flag arguments.
 #' @slot flags_alias A character vector of defined flag alias.
 #' @slot flags_isOptional A logical vector indicating wheather a flag is optional or not.
@@ -58,7 +58,7 @@ ArgParser <- setClass("ArgParser",
 #'
 #' @param .Object A prototyped object of class ArgParser.
 #' @param desc A description shown in usage. desc with length > 1 will be printed in seperated lines.
-#' @param prog A program name shown in usage, if not set, will default to the value of "--file=" flag given in commandArg().
+#' @param prog A program name shown in usage, if not set, will default to the value of "-{}-file=" flag given in commandArg().
 #' @return An S4 object of class ArgParser.
 #' @examples
 #' p1 <- ArgParser(desc="a test description", prog="test.R")
