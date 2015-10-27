@@ -73,7 +73,33 @@ $`--help`
 ```
 
 ### Switch
+Use `addSwitch` to define switch argument to your parser. The `states` argument should be of length 2 if not a logical vector, where the first element corresponds to the "unpushed" state (i.e., the switch is not present in the given command line string) and the second "pushed" state.
+
+```R
+#!/usr/bin/env Rscript
+library(methods)
+library(ArgParser)
+library(magrittr)
+p <- ArgParser(desc="a test for switches") %>% 
+    addSwitch("--switch1", "-s1", help="this is a default logical switch") %>%
+    addSwitch("--switch2", "-s2", states=list(0,1), help="this is an ad-hoc switch")
+parseCommandLine(p)
+```
+Test the above script, assuming file name "test.R":
+```
+$ ./test.R -s2
+```
+shall give result as:
+```
+$`--help`
+[1] FALSE
+
+$`--switch1`
+[1] FALSE
+
+$`--switch2`
+[1] 1
+```
 
 ### Opt
 
-``
