@@ -142,3 +142,84 @@ test_that("duplicated forced flags cause error", {
           expect_error(parseCommandLine(argParser4, cmdargs24))
 })
 
+#------------------------------#
+# test for comprehensive usage #
+#------------------------------#
+
+argParser5 <- ArgParser() %>%
+    addFlag("--flag", "-f") %>%
+    addSwitch("--switch", "-s") %>%
+    addOpt("opt")
+
+cmdargs25 <- getTestInput("prog.R --args -f vf -s a")
+cmdargs26 <- getTestInput("prog.R --args a -f vf -s")
+cmdargs27 <- getTestInput("prog.R --args -f vf a -s")
+
+test_that("all arguments work together properly: opt can be inter-positioned", {
+          expect_identical(parseCommandLine(argParser5, cmdargs25), list(`--flag`="vf", `--help`=F, `--switch`=T, opt='a'))
+          expect_identical(parseCommandLine(argParser5, cmdargs26), list(`--flag`="vf", `--help`=F, `--switch`=T, opt='a'))
+          expect_identical(parseCommandLine(argParser5, cmdargs27), list(`--flag`="vf", `--help`=F, `--switch`=T, opt='a'))
+})
+
+cmdargs28 <- getTestInput("prog.R --args -s -f vf a")
+cmdargs29 <- getTestInput("prog.R --args a -f vf -s")
+cmdargs30 <- getTestInput("prog.R --args -s -f vf a")
+
+test_that("all arguments work together properly: order of flags/siwtches do not matter", {
+          expect_identical(parseCommandLine(argParser5, cmdargs28), list(`--flag`="vf", `--help`=F, `--switch`=T, opt='a'))
+          expect_identical(parseCommandLine(argParser5, cmdargs29), list(`--flag`="vf", `--help`=F, `--switch`=T, opt='a'))
+          expect_identical(parseCommandLine(argParser5, cmdargs30), list(`--flag`="vf", `--help`=F, `--switch`=T, opt='a'))
+})
+
+cmdargs31 <- getTestInput("prog.R --args a")
+cmdargs32 <- getTestInput("prog.R --args a -s")
+cmdargs33 <- getTestInput("prog.R --args a -f vf")
+
+test_that("all arguments work together properly: optional flag and switch is indeed optional", {
+          expect_identical(parseCommandLine(argParser5, cmdargs31), list(`--help`=F, `--switch`=F, opt='a'))
+          expect_identical(parseCommandLine(argParser5, cmdargs32), list(`--help`=F, `--switch`=T, opt='a'))
+          expect_identical(parseCommandLine(argParser5, cmdargs33), list(`--flag`="vf", `--help`=F, `--switch`=F, opt='a'))
+})
+
+argParser6 <- ArgParser() %>%
+    addFlag("--flag1", "-f1") %>%
+    addFlag("--flag2", "-f2", optional=FALSE) %>%
+    addFlag("--flag3", "-f3", default="df") %>%
+    addSwitch("--switch1", "-s1") %>%
+    addSwitch("--switch2", "-s2", states=1:2L) %>%
+    addOpt("opt1", 2, 2) %>%
+    addOpt("opt2")
+
+cmdargs34 <- getTestInput("prog.R --args -f1 1 -f2 2 -f3 3 -s1 -s2 a b c")
+cmdargs35 <- getTestInput("prog.R --args -f1 1 -f2 2 -s1 -s2 a b c d -f3")
+cmdargs36 <- getTestInput("prog.R --args -f2 2 a b c")
+
+test_that("all arguments work togetjer properly: ", {
+          expect_identical(parseCommandLine(argParser6, cmdargs34), 
+                           list(`--flag1`='1', `--flag2`='2', `--flag3`='3', `--help`=F, `--switch1`=T, `--switch2`=2L, opt1=c('a','b'), opt2='c'))
+          expect_identical(parseCommandLine(argParser6, cmdargs35), 
+                           list(`--flag1`='1', `--flag2`='2', `--flag3`='df', `--help`=F, `--switch1`=T, `--switch2`=2L, opt1=c('a','b'), opt2='c'))
+          expect_identical(parseCommandLine(argParser6, cmdargs36), 
+                           list(`--flag2`='2', `--help`=F, `--switch1`=F, `--switch2`=1L, opt1=c('a','b'), opt2='c'))
+})
+
+cmdargs37 <- getTestInput("prog.R --args -f2 2 a b")
+cmdargs38 <- getTestInput("prog.R --args -f2 2 -f3 3 a b -s1")
+cmdargs39 <- getTestInput("prog.R --args -s1 a -f2 2 b -s2 -f3")
+
+test_that("all arguments work togetjer properly: insufficient opt cause error", {
+          expect_error(parseCommandLine(argParser6, cmdargs37), "^.*less than required.*")
+          expect_error(parseCommandLine(argParser6, cmdargs38), "^.*less than required.*")
+          expect_error(parseCommandLine(argParser6, cmdargs39), "^.*less than required.*")
+})
+
+cmdargs40 <- getTestInput("prog.R --args -f2 2 a b c -f2 3")
+cmdargs41 <- getTestInput("prog.R --args -f2 2 a b -s1 c --switch1")
+cmdargs42 <- getTestInput("prog.R --args -s1 a -f2 2 b -s2 -f3 --flag3")
+
+test_that("all arguments work togetjer properly: duplicated flags/switches cause error", {
+          expect_error(parseCommandLine(argParser6, cmdargs40), "^.*duplicated.*")
+          expect_error(parseCommandLine(argParser6, cmdargs41), "^.*duplicated.*")
+          expect_error(parseCommandLine(argParser6, cmdargs42), "^.*duplicated.*")
+})
+
