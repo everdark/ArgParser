@@ -5,98 +5,75 @@ Inspired by the module `argparse` in python, a command line argument parser for 
 ```R
 devtools::install_github("everdark/ArgParser")
 ```
+Please be noticed that the repo is currently under development and hence is highly dynamic.
 
-## Example Use
-+ Declare the parser in `test.R` as the following:
+## Introduction
+There are three types of command line arguments defined in `ArgParser`:
++ Flag argument
+    + a key-value pair supplied in command line; key string must be prefixed with `--` (in full name) or `-` (in short alias)
+    + in the form of `--f v` where `--f` is the flag name and `v` is the corresponding value
+    + can be optional
+    + can have a default value, such that only key is supplied in command line
++ Switch argument
+    + like a flag without value; must be prefixed with `--` (in full name) or `-` (in short alias)
+    + a states of unpushed/pushed values are pre-defined
+    + states can be logical (by default) or any other types
+    + A default `--help` (`-h`) switch is always available for printing help message
++ Positional (opt) argument
+    + any string (after `--args` in the parsed result of `commandArgs`) left after consuming all flags and switches will be treated as positional argument
+    + one opt can optionally consume more than one string
+
+## Usage
+### Flag
+Use `addFlag` to define flag argument to your parser.
+
 ```R
 #!/usr/bin/env Rscript
-
 library(methods)
+library(ArgParser)
 library(magrittr)
-invisible(sapply(dir("./R", full.names=T), source))
-p <- ArgParser(desc="A test for ArgParser") %>% 
+p <- ArgParser(desc="a test for flags") %>% 
     addFlag("--flag1", "-f1", help="this is an optional flag") %>%
-    addFlag("--flag2", help="this is an optional flag with default value", default="f1d") %>%
-    addFlag("--flag3", "-f3", help="this is a forced flag", optional=FALSE) %>%
-    addSwitch("--logical-switch", "-s1", help="a logical switch", states=FALSE) %>%
-    addSwitch("--adhoc-switch", "-s2", help="an ad-hoc switch", states=list(1,0)) %>%
-    addOpt("opt1", help="positional arg 1") %>%
-    addOpt("opt2", narg=2, nrequired=1, help="positional arg 2")
-pargs <- parseCommandLine(p, commandArgs(), trim=T)
-
-writeLines('')
-writeLines("Original command line string:")
-writeLines("-----------------------------")
-commandArgs()
-writeLines('')
-writeLines("Parsed result:")
-writeLines("--------------")
-pargs
+    addFlag("--flag2", "-f2", optional=F, help="this is a forced flag") %>%
+    addFlag("--flag3", "-f3", default="v3", help="this is a flag with default value") %>%
+parseCommandLine(p)
 ```
-+ Then run help:
+Test the above script, assuming file name "test.R":
++ Show help message by supplying `-h` (e.g, `./test.R -h`)
 ```
-$ ./test.R -h
-Usage: test.R [--help] [--logical-switch] [--adhoc-switch] --flag3 [--flag1] [--flag2] opt1 opt2[...]
+Usage: test.R [--help] --flag2 [--flag1] [--flag3]
 
-A test for ArgParser
+a test for flags
 
-Logical switches:
-  -h, --help             show this message and exit
-  -s1, --logical-switch  a logical switch
-Ad-hoc switch:
-  -s2, --adhoc-switch    an ad-hoc switch
+Logical switch:
+  -h, --help    show this message and exit
 Forced flag:
-  -f3, --flag3           this is a forced flag
+  -f2, --flag2  this is a forced flag
 Optional flags:
-  -f1, --flag1           this is an optional flag
-  --flag2                this is an optional flag with default value
-Positional arguments:
-  opt1                   positional arg 1
-  opt2                   positional arg 2
+  -f1, --flag1  this is an optional flag
+  -f3, --flag3  this is a flag with default value
 ```
-
-
-+ Or run any valid arg string:
++ Parse command line strings
 ```
-$ ./test.R -f3 v3 opt1 opt2 -s1 --flag2
-Warning message:
-In .local(x, name, ...) :
-  Found nrequired < narg, then this opt MUST be the last opt defined so it will work.
+$ ./test.R -f1 v1 -f2 v2 -f3
+```
+shall give result as:
+```
+$`--flag1`
+[1] "v1"
 
-Original command line string:
------------------------------
- [1] "/Library/Frameworks/R.framework/Resources/bin/exec/R"
- [2] "--slave"
- [3] "--no-restore"
- [4] "--file=./test.R"
- [5] "--args"
- [6] "-f3"
- [7] "v3"
- [8] "opt1"
- [9] "opt2"
-[10] "-s1"
-[11] "--flag2"
+$`--flag2`
+[1] "v2"
 
-Parsed result:
---------------
-$flag3
+$`--flag3`
 [1] "v3"
 
-$flag2
-[1] "f1d"
-
-$help
+$`--help`
 [1] FALSE
-
-$`logical-switch`
-[1] TRUE
-
-$`adhoc-switch`
-[1] 1
-
-$opt1
-[1] "opt1"
-
-$opt2
-[1] "opt2" NA
 ```
+
+### Switch
+
+### Opt
+
+``
