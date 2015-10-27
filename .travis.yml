@@ -7,7 +7,7 @@ sudo: required
 env:
  global:
    - R_CHECK_ARGS="--no-build-vignettes --no-manual --timings"
-   - CRAN: http://cran.rstudio.com
+   - CRAN="http://cran.rstudio.com"
 
 notifications:
   email:
