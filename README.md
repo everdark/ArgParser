@@ -102,4 +102,41 @@ $`--switch2`
 ```
 
 ### Opt
+Use `addOpt` to define positional argument to your parser.
+```R
+#!/usr/bin/env Rscript
+library(methods)
+library(ArgParser)
+library(magrittr)
+p <- ArgParser(desc="a test for opts") %>% 
+    addFlag("--flag", "-f") %>%
+    addSwitch("--switch", "-s") %>%
+    addOpt("opt1") %>%
+    addOpt("opt2", narg=3, nreq=1)
+parseCommandLine(p)
+```
+Test the above script, assuming file name "test.R":
+```
+$ ./test.R -f vf abc -s def ghi
+```
+shall give result as:
+```
+Warning message:
+In .local(x, name, ...) :
+  Found nrequired < narg, then this opt MUST be the last opt defined so it will work.
+$`--flag`
+[1] "vf"
 
+$`--help`
+[1] FALSE
+
+$`--switch`
+[1] TRUE
+
+$opt1
+[1] "abc"
+
+$opt2
+[1] "def" "ghi" NA   
+```
+Notice that a warning is issued. The reason being clear in the message and the care is left for user to take.
