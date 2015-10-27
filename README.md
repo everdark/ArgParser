@@ -1,3 +1,5 @@
+[![Travis-CI Build Status](https://travis-ci.org/everdark/ArgParser.svg?branch=master)](https://travis-ci.org/everdark/ArgParser)
+
 # ArgParser
 Inspired by the module `argparse` in python, a command line argument parser for R, implemented in S4 without external dependency. 
 Still in beta!
