@@ -46,7 +46,8 @@ setMethod("parseCommandLine", signature=c(x="ArgParser"),
               if ( !is.na(args_idx <- match("--args", parsed_switches$cmdargs_consumed)) ) {
                   cmdargs_consumed <- parsed_switches$cmdargs_consumed[-c(1:args_idx)]
               } else {
-                  cmdargs_consumed <- parsed_switches$cmdargs_consumed
+                  # cmdargs_consumed <- parsed_switches$cmdargs_consumed
+                  stop("No positional argument found.")
               }
               parsed_opt <- parseOpt(x=x, cmdargs_consumed=cmdargs_consumed)
               parsed <- c(parsed, parsed_opt)
