@@ -35,7 +35,7 @@ library(magrittr)
 p <- ArgParser(desc="a test for flags") %>% 
     addFlag("--flag1", "-f1", help="this is an optional flag") %>%
     addFlag("--flag2", "-f2", optional=F, help="this is a forced flag") %>%
-    addFlag("--flag3", "-f3", default="v3", help="this is a flag with default value") %>%
+    addFlag("--flag3", "-f3", default="v3", help="this is a flag with default value")
 parseCommandLine(p)
 ```
 Test the above script, assuming file name "test.R":
