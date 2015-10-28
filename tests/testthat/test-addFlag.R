@@ -91,5 +91,7 @@ test_that("all arguments work properly together", {
           expect_identical(p@help["--f1"], c(`--f1`="help"))
 })
 
-
+test_that("add no-defined directive will cause error", {
+          expect_error(ArgParser() %>% addFlag("--f", directive="dir"), "^.*must be defined first.*")
+})
 
