@@ -48,6 +48,12 @@ test_that("optional, if any, is properly set", {
                            c(`--f1`=TRUE, `--f2`=FALSE))
 })
 
+test_that("optional definition of length > 1 will be warnedm and the first one kept", {
+          expect_warning(ArgParser() %>% addFlag("--f", optional=c(TRUE, FALSE)))
+          expect_identical((ArgParser() %>% addFlag("--f", optional=c(TRUE, FALSE)))@flags,
+                           list(`--f`=NA))
+})
+
 test_that("default, if any, is properly set", {
           expect_identical((ArgParser() %>% addFlag("--f1"))@flags, 
                            list(`--f1`=NA))

@@ -24,6 +24,7 @@ setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
 setMethod("addFlag", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, short=NULL, default=NULL, optional=TRUE, help=NULL) {
               name <- .checkArgLen(name, 1)
+              optional <- .checkArgLen(optional, 1)
               if ( !is.null(default) ) {
                   default <- .checkArgLen(default, 1)
                   x@flags <- c(x@flags, setNames(default, name))
