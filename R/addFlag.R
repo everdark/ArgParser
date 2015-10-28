@@ -46,7 +46,8 @@ setMethod("addFlag", signature=c(x="ArgParser", name="character"),
                   if ( any(not_defined <- !directive %in% names(x@directs)) )
                       stop(sprintf("Directive not found in parser (%s): must be defined first.",
                                    toString(directive[not_defined])))
-                  x@directs[[directive]]$flags <- c(x@directs[[directive]]$flags, name)
+                  for ( d in directive )
+                    x@directs[[d]]$flags <- c(x@directs[[d]]$flags, name)
               }
 
               validObject(x)

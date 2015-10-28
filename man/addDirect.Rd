@@ -14,11 +14,11 @@ addDirect(x, name, ...)
 \arguments{
 \item{x}{An ArgParser object.}
 
-\item{name}{Character vector of the directive name. Should be of length 1.}
+\item{name}{Character vector of directive. Length > 1 is allowed.}
 
 \item{...}{Other arguments used in dispatched method.}
 
-\item{optional}{Optional logical vector of length 1. Is the directive optional?}
+\item{optional}{Optional logical vector with same length as name.}
 
 \item{help}{Optional character vector shown in usage for the directive. If any, should be of length 1.}
 }

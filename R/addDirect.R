@@ -4,14 +4,14 @@ NULL
 #' Add directive to parser.
 #' 
 #' @param x An ArgParser object.
-#' @param name Character vector of the directive name. Should be of length 1.
+#' @param name Character vector of directive. Length > 1 is allowed.
 #' @param ... Other arguments used in dispatched method.
 
 #' @export
 setGeneric("addDirect", def=function(x, name, ...) standardGeneric("addDirect"))
 
 #' @describeIn addDirect
-#' @param optional Optional logical vector of length 1. Is the directive optional?
+#' @param optional Optional logical vector with same length as name.
 #' @param help Optional character vector shown in usage for the directive. If any, should be of length 1.
 #' @return An ArgParser with the directive definition added.
 #' @examples
@@ -22,9 +22,16 @@ setGeneric("addDirect", def=function(x, name, ...) standardGeneric("addDirect"))
 setMethod("addDirect", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, optional=TRUE, help=NULL) {
               newdirect <- list(flags=character(0), switches=character(0), opt=character(0))
-              name <- .checkArgLen(name, 1)
               optional <- .checkArgLen(optional, 1)
-              x@directs <- c(x@directs, setNames(list(newdirect), name))
+              if ( (nlen <- length(name)) > (olen <- length(optional)) ) {
+                  warning("Length of optional is smaller than name. The rest are assumed TRUE.")
+                  optional[(olen+1):nlen] <- TRUE
+              } else if ( nlen < olen ) {
+                  warning("Length of optional is greater than name and hence trimmed.")
+                  optional <- optional[1:nlen]
+              }
+              for ( n in name )
+                  x@directs <- c(x@directs, setNames(list(newdirect), n))
               x@directs_isOptional <- c(x@directs_isOptional, setNames(optional, name))
               if ( !is.null(help) ) {
                   help <- .checkArgLen(help, 1)
