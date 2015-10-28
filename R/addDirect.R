@@ -21,9 +21,10 @@ setGeneric("addDirect", def=function(x, name, ...) standardGeneric("addDirect"))
 #' @export
 setMethod("addDirect", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, optional=TRUE, help=NULL) {
+              newdirect <- list(flags=character(0), switches=character(0), opt=character(0))
               name <- .checkArgLen(name, 1)
               optional <- .checkArgLen(optional, 1)
-              x@directs <- c(x@directs, name)
+              x@directs <- c(x@directs, setNames(list(newdirect), name))
               x@directs_isOptional <- c(x@directs_isOptional, setNames(optional, name))
               if ( !is.null(help) ) {
                   help <- .checkArgLen(help, 1)
