@@ -16,10 +16,12 @@ URL: https://github.com/everdark/ArgParser
 BugReports: https://github.com/everdark/ArgParser/issues
 Collate:
     'ArgParser.R'
+    'addDirect.R'
     'addFlag.R'
     'addOpt.R'
     'addSwitch.R'
     'parseCommandLine.R'
+    'parseDirect.R'
     'parseFlag.R'
     'parseOpt.R'
     'parseSwitch.R'
