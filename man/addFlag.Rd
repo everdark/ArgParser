@@ -9,7 +9,7 @@
 addFlag(x, name, ...)
 
 \S4method{addFlag}{ArgParser,character}(x, name, short = NULL,
-  default = NULL, optional = TRUE, help = NULL)
+  default = NULL, optional = TRUE, help = NULL, directive = NULL)
 }
 \arguments{
 \item{x}{An ArgParser object.}
@@ -25,6 +25,8 @@ addFlag(x, name, ...)
 \item{optional}{Optional logical vector of length 1. Is the flag optional?}
 
 \item{help}{Optional character vector shown in usage for the flag. If any, should be of length 1.}
+
+\item{directive}{character vector indicating any directive the flag belongs to.}
 }
 \value{
 An ArgParser with the flag definition added.

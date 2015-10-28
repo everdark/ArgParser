@@ -15,6 +15,7 @@ setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
 #' @param default Optional default value. If any, Should be of length 1.
 #' @param optional Optional logical vector of length 1. Is the flag optional?
 #' @param help Optional character vector shown in usage for the flag. If any, should be of length 1.
+#' @param directive character vector indicating any directive the flag belongs to.
 #' @return An ArgParser with the flag definition added.
 #' @examples
 #' p <- ArgParser("a test parser")
