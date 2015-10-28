@@ -14,7 +14,7 @@ NULL
 #' @slot opt A character vector of defined positional arguments.
 #' @slot opt_narg An integer vector indicating the number of positinal arguments to consume for each opt.
 #' @slot opt_nrequired An integer vector indicating the number of required positional arguments to consume for each opt.
-#' @slot directs A character vector of defined directives.
+#' @slot directs A list of defined directives.
 #' @slot directs_isOptional A logical vector indicating wheather a directive is optional or not.
 #' @slot help A character vector of defined help message for each argument.
 
@@ -32,7 +32,7 @@ ArgParser <- setClass("ArgParser",
                               opt="character",
                               opt_narg="integer",
                               opt_nrequired="integer",
-                              directs="character",
+                              directs="list",
                               directs_isOptional="logical",
                               help="character"),
                       prototype=list(#desc='',
@@ -50,7 +50,7 @@ ArgParser <- setClass("ArgParser",
                           all_alias <- all_alias[!is.na(all_alias)]
                           if ( any(sapply(all_switches_flags, function(x) substr(x,1,2) != "--")) )
                               return("Name of flags/switches should have double-dash (--) prefix.")
-                          if ( any(duplicated(c(all_switches_flags, object@opt, object@directs, all_alias))) )
+                          if ( any(duplicated(c(all_switches_flags, object@opt, names(object@directs), all_alias))) )
                               return("Duplicated arg name found.")
                           if ( any(sapply(all_alias, function(x) substr(x,1,1) != '-')) )
                               return("Short name alias should have single-dash (-) prefix.")
