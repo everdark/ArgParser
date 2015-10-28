@@ -12,6 +12,6 @@
 .checkDupArg <- function(cmdargs, allargs) {
     arg_raised <- cmdargs[cmdargs %in% allargs]
     if ( any(is_dup <- duplicated(arg_raised)) )
-        stop(sprintf("Some flags/switches are duplicated in given command line string: %s",
+        stop(sprintf("Some args are duplicated in given command line string: %s",
                      paste(arg_raised[is_dup])))
 }
