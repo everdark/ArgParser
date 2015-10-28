@@ -22,6 +22,7 @@ setGeneric("addDirect", def=function(x, name, ...) standardGeneric("addDirect"))
 setMethod("addDirect", signature=c(x="ArgParser", name="character"), 
           definition=function(x, name, optional=TRUE, help=NULL) {
               name <- .checkArgLen(name, 1)
+              optional <- .checkArgLen(optional, 1)
               x@directs <- c(x@directs, name)
               x@directs_isOptional <- c(x@directs_isOptional, setNames(optional, name))
               if ( !is.null(help) ) {
