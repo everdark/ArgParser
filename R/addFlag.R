@@ -22,22 +22,35 @@ setGeneric("addFlag", def=function(x, name, ...) standardGeneric("addFlag"))
 
 #' @export
 setMethod("addFlag", signature=c(x="ArgParser", name="character"), 
-          definition=function(x, name, short=NULL, default=NULL, optional=TRUE, help=NULL) {
+          definition=function(x, name, short=NULL, default=NULL, optional=TRUE, help=NULL, directive=NULL) {
+
               name <- .checkArgLen(name, 1)
+
               if ( !is.null(default) ) {
                   default <- .checkArgLen(default, 1)
                   x@flags <- c(x@flags, setNames(default, name))
               } else {
                   x@flags <- c(x@flags, setNames(NA, name))
               }
+
               x@flags_alias <- c(x@flags_alias, setNames(ifelse(is.null(short), NA_character_, short), name))
               x@flags_isOptional <- c(x@flags_isOptional, setNames(optional, name))
+
               if ( !is.null(help) ) {
                   help <- .checkArgLen(help, 1)
                   x@help <- c(x@help, setNames(help, name))
               }
+
+              if ( !is.null(directive) ) {
+                  if ( any(not_defined <- !directive %in% names(x@directs)) )
+                      stop(sprintf("Directive not found in parser (%s): must be defined first.",
+                                   toString(directive[not_defined])))
+                  x@directs[[directive]]$flags <- c(x@directs[[directive]]$flags, name)
+              }
+
               validObject(x)
               x
+
           })
 
 
