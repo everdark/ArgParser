@@ -1,9 +1,15 @@
 
-setGeneric("parseFlag", def=function(x, cmdargs) standardGeneric("parseFlag"))
+setGeneric("parseFlag", def=function(x, cmdargs, ...) standardGeneric("parseFlag"))
 
 setMethod("parseFlag", signature=c(x="ArgParser", cmdargs="character"),
-          definition=function(x, cmdargs) {
+          definition=function(x, cmdargs, limited_to=NULL) {
               
+              if ( !is.null(limited_to) ) {
+                  x@flags <- x@flags[limited_to]
+                  x@flags_alias <- x@flags_alias[limited_to]
+                  x@flags_isOptional <- x@flags_isOptional[limited_to]
+              }
+
               parsed <- list()
               flag_kv_idx <- integer(0)
               allargs <- c(names(x@flags), names(x@switches_logic), names(x@switches_any))
