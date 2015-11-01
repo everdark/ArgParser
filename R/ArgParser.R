@@ -14,8 +14,8 @@ NULL
 #' @slot opt A character vector of defined positional arguments.
 #' @slot opt_narg An integer vector indicating the number of positinal arguments to consume for each opt.
 #' @slot opt_nrequired An integer vector indicating the number of required positional arguments to consume for each opt.
-#' @slot directs A list of defined (grouped or ungrouped) directives.
-#' @slot directs_isOptional A logical vector indicating wheather a directive is optional or not.
+#' @slot directs A list of all defined directives.
+#' @slot directs_group A list of directive grouping information.
 #' @slot help A character vector of defined help message for each argument.
 
 #' @export ArgParser
@@ -33,7 +33,7 @@ ArgParser <- setClass("ArgParser",
                               opt_narg="integer",
                               opt_nrequired="integer",
                               directs="list",
-                              directs_isOptional="logical",
+                              directs_group="list",
                               help="character"),
                       prototype=list(#desc='',
                                      #prog='',
@@ -48,11 +48,12 @@ ArgParser <- setClass("ArgParser",
                           all_alias <- c(object@flags_alias,
                                          object@switches_alias)
                           all_alias <- all_alias[!is.na(all_alias)]
+                          all_directs <- names(object@directs)
                           if ( any(sapply(all_switches_flags, function(x) substr(x,1,2) != "--")) )
                               return("Name of flags/switches should have double-dash (--) prefix.")
-                          if ( any(duplicated(c(all_switches_flags, object@opt, unlist(object@directs), all_alias))) )
+                          if ( any(duplicated(c(all_switches_flags, object@opt, all_directs, all_alias))) )
                               return("Duplicated arg names found.")
-                          if ( any(duplicated(names(object@directs))) )
+                          if ( any(duplicated(names(object@directs_group))) )
                               return("Duplicated directive group names found.")
                           if ( any(sapply(all_alias, function(x) substr(x,1,1) != '-')) )
                               return("Short name alias should have single-dash (-) prefix.")
