@@ -45,7 +45,12 @@ setMethod("parseDirect", signature=c(x="ArgParser", cmdargs="character"),
                       cmdargs <- sparsed$cmdargs_consumed
                   }
                   # sub-opt
-              }
+                  if ( length(dopt <- x@directs[[raised_direct]]$opt) ) {
+                      oparsed <- parseOpt(x, cmdargs, dopt)
+                      parsed[[raised_direct]] <- c(parsed[[raised_direct]], oparsed$argv)
+                      cmdargs <- oparsed$cmdargs_consumed
+                  }
+             }
 
               list(argv=parsed, 
                    cmdargs_consumed=c(pre_cmdargs, cmdargs))
