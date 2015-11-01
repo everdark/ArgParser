@@ -3,7 +3,7 @@
 # check length of an argument and return its valid truncated
 .checkArgLen <- function(arg, maxlen) {
     if ( length(arg) > maxlen ) 
-        warning(sprintf("Argument %s has length > %s; only the first %s is respected.", 
+        warning(sprintf("Argument %s has length > %s; only the first %s respected.", 
                         as.character(substitute(arg)), maxlen, maxlen))
     arg[1:maxlen]
 }
