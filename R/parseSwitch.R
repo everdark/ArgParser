@@ -1,8 +1,14 @@
 
-setGeneric("parseSwitch", def=function(x, cmdargs) standardGeneric("parseSwitch"))
+setGeneric("parseSwitch", def=function(x, cmdargs, ...) standardGeneric("parseSwitch"))
 
 setMethod("parseSwitch", signature=c(x="ArgParser", cmdargs="character"),
-          definition=function(x, cmdargs) {
+          definition=function(x, cmdargs, limited_to=NULL) {
+
+              if ( !is.null(limited_to) ) {
+                  x@switches_logic <- x@switches_logic[limited_to]
+                  x@switches_any <- x@switches_any[limited_to]
+                  x@switches_alias <- x@switches_alias[limited_to]
+              }
 
               parsed <- list()
 
