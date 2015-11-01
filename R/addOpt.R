@@ -14,6 +14,7 @@ setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
 #' @param help Optional character vector shown in usage for the opt. If any, should be of length 1.
 #' @param narg Optinal number of arguments to be consumed.
 #' @param nrequired Optional number of arguments required to be consumed.
+#' @param directive character vector indicating any directive the opt belongs to.
 #' @return An ArgParser with the opt definition added.
 #' @examples
 #' p <- ArgParser("a test parser")
@@ -21,7 +22,7 @@ setGeneric("addOpt", def=function(x, name, ...) standardGeneric("addOpt"))
 
 #' @export
 setMethod("addOpt", signature=c(x="ArgParser", name="character"), 
-          definition=function(x, name, help=NULL, narg=1L, nrequired=narg) {
+          definition=function(x, name, help=NULL, narg=1L, nrequired=narg, directive=NULL) {
               name <- .checkArgLen(name, 1)
               narg <- as.integer(.checkArgLen(narg, 1))
               nrequired <- as.integer(.checkArgLen(nrequired, 1))
@@ -35,6 +36,13 @@ setMethod("addOpt", signature=c(x="ArgParser", name="character"),
               if ( !is.null(help) ) {
                   help <- .checkArgLen(help, 1)
                   x@help <- c(x@help, setNames(help, name))
+              }
+              if ( !is.null(directive) ) {
+                  if ( any(not_defined <- !directive %in% names(x@directs)) )
+                      stop(sprintf("Directive not found in parser (%s): must be defined first.",
+                                   toString(directive[not_defined])))
+                  for ( d in directive )
+                    x@directs[[d]]$opt <- c(x@directs[[d]]$opt, name)
               }
               validObject(x)
               x

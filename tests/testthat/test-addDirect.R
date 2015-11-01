@@ -67,5 +67,6 @@ test_that("all arguments work properly together", {
 test_that("add no-defined directive will cause error", {
           expect_error(ArgParser() %>% addFlag("--f", directive="dir"), "^.*must be defined first.*")
           expect_error(ArgParser() %>% addSwitch("--s", directive="dir"), "^.*must be defined first.*")
+          expect_error(ArgParser() %>% addOpt("opt", directive="dir"), "^.*must be defined first.*")
 })
 
