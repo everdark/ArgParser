@@ -42,8 +42,8 @@ test_that("help, if any, is property set", {
                            c(`--help`="show this message and exit", dir1="dir1 help", dir2="dir2 help"))
           expect_identical((ArgParser() %>% addDirect(c("dir1", "dir2"), help=c("dir1 help")))@help, 
                            c(`--help`="show this message and exit", dir1="dir1 help", dir2=NA))
-          expect_identical((ArgParser() %>% addDirect("dir1", help="dir1 help") %>% addDirect("dir2", help="dir2 help"))@help, 
-                           c(`--help`="show this message and exit", dir1="dir1 help", dir2="dir2 help"))
+          #expect_identical((ArgParser() %>% addDirect("dir1", help="dir1 help") %>% addDirect("dir2", help="dir2 help"))@help, 
+          #                 c(`--help`="show this message and exit", dir1="dir1 help", dir2="dir2 help"))
 })
 
 test_that("help definition of length > length(name) will be warned, and the first length(name) kept", {
