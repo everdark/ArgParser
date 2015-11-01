@@ -24,6 +24,8 @@ setMethod("addDirect", signature=c(x="ArgParser", name="character"),
           definition=function(x, name, groupname=NULL, optional=FALSE, help=NULL) {
               newdirect <- list(flags=character(0), switches=character(0), opt=character(0))
               optional <- .checkArgLen(optional, 1)
+              if ( optional )
+                  stop("optional=T is not yet supported.")
               groupname <- .checkArgLen(groupname, 1)
               if ( is.null(groupname) )
                   groupname <- sprintf("_g%s", length(x@directs_group) + 1)
