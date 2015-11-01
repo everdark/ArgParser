@@ -11,8 +11,9 @@ NULL
 setGeneric("addDirect", def=function(x, name, ...) standardGeneric("addDirect"))
 
 #' @describeIn addDirect
-#' @param optional Optional logical vector with same length as name.
-#' @param help Optional character vector shown in usage for the directive. If any, should be of length 1.
+#' @param groupname Optional character vector of length 1, name for grouped directives.
+#' @param optional Optional logical vector of length 1, indicating wheather the (grouped) directive is optional or not.
+#' @param help Optional character vector shown in usage for the directive.
 #' @return An ArgParser with the directive definition added.
 #' @examples
 #' p <- ArgParser("a test parser")
@@ -20,21 +21,14 @@ setGeneric("addDirect", def=function(x, name, ...) standardGeneric("addDirect"))
 
 #' @export
 setMethod("addDirect", signature=c(x="ArgParser", name="character"), 
-          definition=function(x, name, optional=TRUE, help=NULL) {
+          definition=function(x, name, groupname=NULL, optional=FALSE, help=NULL) {
               newdirect <- list(flags=character(0), switches=character(0), opt=character(0))
               optional <- .checkArgLen(optional, 1)
-              if ( (nlen <- length(name)) > (olen <- length(optional)) ) {
-                  warning("Length of optional is smaller than name. The rest are assumed TRUE.")
-                  optional[(olen+1):nlen] <- TRUE
-              } else if ( nlen < olen ) {
-                  warning("Length of optional is greater than name and hence trimmed.")
-                  optional <- optional[1:nlen]
-              }
-              for ( n in name )
-                  x@directs <- c(x@directs, setNames(list(newdirect), n))
-              x@directs_isOptional <- c(x@directs_isOptional, setNames(optional, name))
+              groupname <- .checkArgLen(groupname, 1)
+              x@directs <- c(x@directs, setNames(list(name), groupname))
+              x@directs_isOptional <- c(x@directs_isOptional, setNames(optional, groupname))
               if ( !is.null(help) ) {
-                  help <- .checkArgLen(help, 1)
+                  help <- .checkArgLen(help, length(name))
                   x@help <- c(x@help, setNames(help, name))
               }
               validObject(x)
