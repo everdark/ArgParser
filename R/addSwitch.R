@@ -14,6 +14,7 @@ setGeneric("addSwitch", def=function(x, name, ...) standardGeneric("addSwitch"))
 #' @param short Optional alias for the switch. Should be of length 1 and prefixed with "-".
 #' @param states Optional states of unpushed/pushed in list of length 2, or a logical vector of length 1 with the unpushed state. 
 #' @param help Optional character vector shown in usage for the switch. If any, should be of length 1.
+#' @param directive character vector indicating any directive the flag belongs to.
 #' @return An ArgParser with the switch definition added.
 #' @examples
 #' p <- ArgParser("a test parser")
@@ -22,7 +23,7 @@ setGeneric("addSwitch", def=function(x, name, ...) standardGeneric("addSwitch"))
 
 #' @export
 setMethod("addSwitch", signature=c(x="ArgParser", name="character"), 
-          definition=function(x, name, short=NULL, states=FALSE, help=NULL) {
+          definition=function(x, name, short=NULL, states=FALSE, help=NULL, directive=NULL) {
               name <- .checkArgLen(name, 1)
               if ( !is.vector(states) ) 
                   stop("Value of states must be of type vector.")
@@ -40,6 +41,13 @@ setMethod("addSwitch", signature=c(x="ArgParser", name="character"),
               if ( !is.null(help) ) {
                   help <- .checkArgLen(help, 1)
                   x@help <- c(x@help, setNames(help, name))
+              }
+              if ( !is.null(directive) ) {
+                  if ( any(not_defined <- !directive %in% names(x@directs)) )
+                      stop(sprintf("Directive not found in parser (%s): must be defined first.",
+                                   toString(directive[not_defined])))
+                  for ( d in directive )
+                    x@directs[[d]]$switches <- c(x@directs[[d]]$switches, name)
               }
               validObject(x)
               x
