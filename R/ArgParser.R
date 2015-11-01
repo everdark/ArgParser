@@ -49,6 +49,8 @@ ArgParser <- setClass("ArgParser",
                                          object@switches_alias)
                           all_alias <- all_alias[!is.na(all_alias)]
                           all_directs <- names(object@directs)
+                          if ( length(object@directs_group) > 1 )
+                              return("Number of directive group is limited to only one. May change in future build.")
                           if ( any(sapply(all_switches_flags, function(x) substr(x,1,2) != "--")) )
                               return("Name of flags/switches should have double-dash (--) prefix.")
                           if ( any(duplicated(c(all_switches_flags, object@opt, all_directs, all_alias))) )
