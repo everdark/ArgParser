@@ -68,5 +68,7 @@ test_that("add no-defined directive will cause error", {
           expect_error(ArgParser() %>% addFlag("--f", directive="dir"), "^.*must be defined first.*")
           expect_error(ArgParser() %>% addSwitch("--s", directive="dir"), "^.*must be defined first.*")
           expect_error(ArgParser() %>% addOpt("opt", directive="dir"), "^.*must be defined first.*")
+          expect_error(ArgParser() %>% addOpt("opt", directive="dir") %>% addDirect("dir"), "^.*must be defined first.*")
+          expect_error(ArgParser() %>% addDirect("dir") %>% addOpt("opt", directive=c("dir", "nodir")), "^.*must be defined first.*")
 })
 
