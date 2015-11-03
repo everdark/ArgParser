@@ -18,7 +18,7 @@ addDirect(x, name, ...)
 
 \item{...}{Other arguments used in dispatched method.}
 
-\item{groupname}{Optional character vector of length 1, name for grouped directives. If not supplied, will be auto-named as "_g%i" for the ith group.}
+\item{groupname}{Optional character vector of length 1, name for grouped directives. If not supplied, will be auto-named as "_g`i`" for the ith group.}
 
 \item{optional}{Optional logical vector of length 1, indicating wheather the (grouped) directive is optional or not.}
 

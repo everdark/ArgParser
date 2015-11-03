@@ -11,7 +11,7 @@ NULL
 setGeneric("addDirect", def=function(x, name, ...) standardGeneric("addDirect"))
 
 #' @describeIn addDirect
-#' @param groupname Optional character vector of length 1, name for grouped directives. If not supplied, will be auto-named as "_g%i" for the ith group.
+#' @param groupname Optional character vector of length 1, name for grouped directives. If not supplied, will be auto-named as "_g`i`" for the ith group.
 #' @param optional Optional logical vector of length 1, indicating wheather the (grouped) directive is optional or not.
 #' @param help Optional character vector shown in usage for the directive.
 #' @return An ArgParser with the directive definition added.
