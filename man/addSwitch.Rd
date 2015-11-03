@@ -9,7 +9,7 @@
 addSwitch(x, name, ...)
 
 \S4method{addSwitch}{ArgParser,character}(x, name, short = NULL,
-  states = FALSE, help = NULL)
+  states = FALSE, help = NULL, directive = NULL)
 }
 \arguments{
 \item{x}{An ArgParser object.}
@@ -23,6 +23,8 @@ addSwitch(x, name, ...)
 \item{states}{Optional states of unpushed/pushed in list of length 2, or a logical vector of length 1 with the unpushed state.}
 
 \item{help}{Optional character vector shown in usage for the switch. If any, should be of length 1.}
+
+\item{directive}{character vector indicating any directive the flag belongs to.}
 }
 \value{
 An ArgParser with the switch definition added.

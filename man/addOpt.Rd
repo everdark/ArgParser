@@ -9,7 +9,7 @@
 addOpt(x, name, ...)
 
 \S4method{addOpt}{ArgParser,character}(x, name, help = NULL, narg = 1L,
-  nrequired = narg)
+  nrequired = narg, directive = NULL)
 }
 \arguments{
 \item{x}{An ArgParser object.}
@@ -23,6 +23,8 @@ addOpt(x, name, ...)
 \item{narg}{Optinal number of arguments to be consumed.}
 
 \item{nrequired}{Optional number of arguments required to be consumed.}
+
+\item{directive}{character vector indicating any directive the opt belongs to.}
 }
 \value{
 An ArgParser with the opt definition added.

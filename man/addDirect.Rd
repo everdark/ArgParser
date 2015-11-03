@@ -8,8 +8,8 @@
 \usage{
 addDirect(x, name, ...)
 
-\S4method{addDirect}{ArgParser,character}(x, name, optional = TRUE,
-  help = NULL)
+\S4method{addDirect}{ArgParser,character}(x, name, groupname = NULL,
+  optional = FALSE, help = NULL)
 }
 \arguments{
 \item{x}{An ArgParser object.}
@@ -18,9 +18,11 @@ addDirect(x, name, ...)
 
 \item{...}{Other arguments used in dispatched method.}
 
-\item{optional}{Optional logical vector with same length as name.}
+\item{groupname}{Optional character vector of length 1, name for grouped directives. If not supplied, will be auto-named as "_g%i" for the ith group.}
 
-\item{help}{Optional character vector shown in usage for the directive. If any, should be of length 1.}
+\item{optional}{Optional logical vector of length 1, indicating wheather the (grouped) directive is optional or not.}
+
+\item{help}{Optional character vector shown in usage for the directive.}
 }
 \value{
 An ArgParser with the directive definition added.

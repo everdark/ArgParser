@@ -51,9 +51,9 @@ An S4 class to represent a command line arguments parser.
 
 \item{\code{opt_nrequired}}{An integer vector indicating the number of required positional arguments to consume for each opt.}
 
-\item{\code{directs}}{A list of defined directives.}
+\item{\code{directs}}{A list of all defined directives.}
 
-\item{\code{directs_isOptional}}{A logical vector indicating wheather a directive is optional or not.}
+\item{\code{directs_group}}{A list of directive grouping information.}
 
 \item{\code{help}}{A character vector of defined help message for each argument.}
 }}
