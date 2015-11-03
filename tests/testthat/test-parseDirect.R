@@ -129,4 +129,9 @@ test_that("duplicated directive names given will cause error", {
           expect_error(parseDirect(p6, cmdargs26))
 })
 
+test_that("null parser works properly", {
+          expect_identical(parseDirect(ArgParser(), cmdargs25),
+                           list(argv=list(), cmdargs_consumed="prog.R"))
+})
+
 

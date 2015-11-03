@@ -50,10 +50,13 @@ setMethod("parseDirect", signature=c(x="ArgParser", cmdargs="character"),
                       parsed[[raised_direct]] <- c(parsed[[raised_direct]], oparsed$argv)
                       post_cmdargs <- oparsed$cmdargs_consumed
                   }
-             }
+                  cmdargs_consumed <- c(pre_cmdargs, post_cmdargs)
+              } else {
+                  cmdargs_consumed <- cmdargs
+              }
 
               list(argv=parsed, 
-                   cmdargs_consumed=c(pre_cmdargs, post_cmdargs))
+                   cmdargs_consumed=cmdargs_consumed)
           })
 
 
