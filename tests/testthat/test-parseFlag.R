@@ -148,5 +148,15 @@ test_that("all components work together properly", {
                                 cmdargs_consumed="prog.R"))
 })
 
-
+test_that("limited_to subset of flags works properly", {
+          expect_identical(parseFlag(p5, cmdargs25, limited_to=c("--flag1")), 
+                           list(argv=list(`--flag1`="v1"), 
+                                cmdargs_consumed=c("prog.R", "-f2", "v2", "--flag3", "-f4", "o4", "--flag5", "v5")))
+          expect_identical(parseFlag(p5, cmdargs25, limited_to=c("--flag1", "--flag2")), 
+                           list(argv=list(`--flag1`="v1", `--flag2`="v2"), 
+                                cmdargs_consumed=c("prog.R", "--flag3", "-f4", "o4", "--flag5", "v5")))
+          expect_identical(parseFlag(p5, cmdargs25, limited_to=c("--flag1", "--flag2", "--noflag")), 
+                           list(argv=list(`--flag1`="v1", `--flag2`="v2"), 
+                                cmdargs_consumed=c("prog.R", "--flag3", "-f4", "o4", "--flag5", "v5")))
+})
 

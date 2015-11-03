@@ -44,5 +44,12 @@ test_that("insufficient opts cause errors", {
           expect_error(parseOpt(p2, cmdargs7), "^.*less than required.*")
 })
 
-
+test_that("limited_to subset of opt works properly", {
+          expect_identical(parseOpt(p2, cmdargs3, c("opt1")), 
+                           list(argv=list(opt1='a'), cmdargs_consumed=c('b', 'c', 'd', 'e')))
+          expect_identical(parseOpt(p2, cmdargs3, c("opt1", "opt2")), 
+                           list(argv=list(opt1='a', opt2=c('b', 'c')), cmdargs_consumed=c('d', 'e')))
+          expect_identical(parseOpt(p2, cmdargs3, c("opt1", "opt2", "noopt")), 
+                           list(argv=list(opt1='a', opt2=c('b', 'c')), cmdargs_consumed=c('d', 'e')))
+})
 

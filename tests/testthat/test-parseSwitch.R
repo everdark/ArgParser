@@ -89,5 +89,17 @@ test_that("states can be multi-typed", {
                            list(argv=list(`--help`=FALSE, `--s1`=1L), cmdargs_consumed="prog.R"))
 })
 
+p5 <- ArgParser() %>%
+    addSwitch("--s1") %>%
+    addSwitch("--s2")
 
+cmdargs16 <- getTestInput("prog.R --s1 --s2")
 
+test_that("limited_to subset of switches works properly", {
+          expect_identical(parseSwitch(p5, cmdargs16, "--s1"), 
+                           list(argv=list(`--s1`=T), cmdargs_consumed=c("prog.R", "--s2")))
+          expect_identical(parseSwitch(p5, cmdargs16, c("--s1", "--s2")), 
+                           list(argv=list(`--s1`=T, `--s2`=T), cmdargs_consumed="prog.R"))
+          expect_identical(parseSwitch(p5, cmdargs16, c("--s1", "--s2", "--noswitch")), 
+                           list(argv=list(`--s1`=T, `--s2`=T), cmdargs_consumed="prog.R"))
+})
