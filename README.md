@@ -25,6 +25,7 @@ There are three types of basic command line arguments defined in `ArgParser`:
 + Positional (opt) argument
     + any string (after `--args` in the parsed result of `commandArgs`) left after consuming all flags and switches will be treated as positional argument
     + one opt can optionally consume more than one string
+
 In addition, a directive can form a sub-command system including the above arguments.
 A directive is a verb that indicates an entry point for a specific set of sub-commands. 
 For example, in `docker run -it /bin/bash` the verb `run` is a directive that consumes flag arguments `-it` and a positional argument `/bin/bash`.
