@@ -39,7 +39,7 @@ The returned object is an S4 class instance with various slots.
 The initializer has been customized so that only slot `desc` and `prog` can be init.
 However, users can still alter slots content at any time via the S4 replace function `@<-`.
 Please don't do this since that may break the mechanism of the parser. 
-Instead, use adder methods (`addFlag`, `addSwitch`, and `addOpt`) to add arguments onto your parser. 
+Instead, use adder methods (`addFlag`, `addSwitch`, `addOpt`, and `addDirect`) to add arguments onto your parser. 
 These methods will update slots with proper manner in order to make the whole things work.
 
 ### Flag
