@@ -32,19 +32,19 @@ setMethod("parseDirect", signature=c(x="ArgParser", cmdargs="character"),
                   pre_cmdargs <- cmdargs[1:(raised_direct_idx-1)]
                   post_cmdargs <- cmdargs[-(1:raised_direct_idx)]
                   parsed <- c(parsed, setNames(list(list()), raised_direct))
-                  # sub-flag
+                  # :sub-flag
                   if ( length(dflags <- x@directs[[raised_direct]]$flags) ) {
                       fparsed <- parseFlag(x, post_cmdargs, dflags)
                       parsed[[raised_direct]] <- c(parsed[[raised_direct]], fparsed$argv)
                       post_cmdargs <- fparsed$cmdargs_consumed
                   }
-                  # sub-switch
+                  # :sub-switch
                   if ( length(dswitches <- x@directs[[raised_direct]]$switches) ) {
                       sparsed <- parseSwitch(x, post_cmdargs, dswitches)
                       parsed[[raised_direct]] <- c(parsed[[raised_direct]], sparsed$argv)
                       post_cmdargs <- sparsed$cmdargs_consumed
                   }
-                  # sub-opt
+                  # :sub-opt
                   if ( length(dopt <- x@directs[[raised_direct]]$opt) ) {
                       oparsed <- parseOpt(x, post_cmdargs, dopt)
                       parsed[[raised_direct]] <- c(parsed[[raised_direct]], oparsed$argv)
