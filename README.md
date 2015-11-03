@@ -1,7 +1,7 @@
 [![Travis-CI Build Status](https://travis-ci.org/everdark/ArgParser.svg?branch=master)](https://travis-ci.org/everdark/ArgParser)
 
 # ArgParser
-Inspired by the module `argparse` in python, a command line argument parser for R, implemented in S4 without external dependency. 
+Inspired by the module [`argparse`](https://docs.python.org/2.7/library/argparse.html#module-argparse) in Python, a command line argument parser for R, implemented in S4 without external dependency. 
 Still in beta!
 
 ## Installation
@@ -11,7 +11,7 @@ devtools::install_github("everdark/ArgParser")
 Please be noticed that the repo is currently under development and hence is highly dynamic.
 
 ## Introduction
-There are three types of command line arguments defined in `ArgParser`:
+There are three types of basic command line arguments defined in `ArgParser`:
 + Flag argument
     + a key-value pair supplied in command line; key string must be prefixed with `--` (in full name) or `-` (in short alias)
     + in the form of `--f v` where `--f` is the flag name and `v` is the corresponding value
@@ -25,6 +25,11 @@ There are three types of command line arguments defined in `ArgParser`:
 + Positional (opt) argument
     + any string (after `--args` in the parsed result of `commandArgs`) left after consuming all flags and switches will be treated as positional argument
     + one opt can optionally consume more than one string
+In addition, a directive can form a sub-command system including the above arguments.
+A directive is a verb that indicates an entry point for a specific set of sub-commands. 
+For example, in `docker run -it /bin/bash` the verb `run` is a directive that consumes flag arguments `-it` and a positional argument `/bin/bash`.
+This kind of command line parsing system can also be easily formed by `ArgParser`.
+See the following for more details.
 
 ## Usage
 ### Initialization
@@ -154,3 +159,48 @@ $opt2
 [1] "def" "ghi" NA   
 ```
 Notice that a warning is issued. The reason being clear in the message and the care is left for user to take.
+
+### Directives (sub-command system)
+Use `addDirect` to define a set of directives argument to your parser.
+Currently only support one such set.
+```R
+#!/usr/bin/env Rscript
+library(methods)
+library(ArgParser)
+library(magrittr)
+p <- ArgParser(desc="a test for directives") %>%
+    addDirect(c("start", "stop")) %>% # only one of them can present
+    addFlag("--f1", dir="start") %>%  # define a flag belonging to a specific directive
+    addFlag("--f2", dir="stop") %>%   # define another such
+    addFlag("--f3") %>%               # a flag not belonging to sub-command system
+    addSwitch("--s", dir=c("start", "stop")) %>% # a switch that is installed onto both directives
+    addOpt("opt1", dir="start") %>%   # positional argument in sub-command system
+    addOpt("opt2")                    # positional argument not in sub-command system
+parseCommandLine(p)
+```
+Test the above script, assuming file name "test.R":
+```
+$ ./test.R start --f1 v1 a b
+```
+shall give result as:
+```
+$start
+$start$`--f1`
+[1] "v1"
+
+$start$`--s`
+[1] FALSE
+
+$start$opt1
+[1] "a"
+
+
+$`--help`
+[1] FALSE
+
+$opt2
+[1] "b"
+
+```
+
+
