@@ -5,9 +5,9 @@ setMethod("parseFlag", signature=c(x="ArgParser", cmdargs="character"),
           definition=function(x, cmdargs, limited_to=NULL) {
               
               if ( !is.null(limited_to) ) {
-                  x@flags <- x@flags[limited_to]
-                  x@flags_alias <- x@flags_alias[limited_to]
-                  x@flags_isOptional <- x@flags_isOptional[limited_to]
+                  x@flags <- x@flags[names(x@flags) %in% limited_to]
+                  x@flags_alias <- x@flags_alias[names(x@flags_alias) %in% limited_to]
+                  x@flags_isOptional <- x@flags_isOptional[names(x@flags_isOptional) %in% limited_to]
               }
 
               parsed <- list()

@@ -5,9 +5,9 @@ setMethod("parseOpt", signature=c(x="ArgParser", cmdargs_consumed="character"),
           definition=function(x, cmdargs_consumed, limited_to=NULL) {
 
               if ( !is.null(limited_to) ) {
-                  x@opt <- limited_to
-                  x@opt_narg <- x@opt_narg[limited_to]
-                  x@opt_nrequired <- x@opt_nrequired[limited_to]
+                  x@opt <- x@opt[x@opt %in% limited_to]
+                  x@opt_narg <- x@opt_narg[names(x@opt_narg) %in% limited_to]
+                  x@opt_nrequired <- x@opt_nrequired[names(x@opt_nrequired) %in% limited_to]
               }
 
               parsed <- list()
