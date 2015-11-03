@@ -103,3 +103,11 @@ test_that("limited_to subset of switches works properly", {
           expect_identical(parseSwitch(p5, cmdargs16, c("--s1", "--s2", "--noswitch")), 
                            list(argv=list(`--s1`=T, `--s2`=T), cmdargs_consumed="prog.R"))
 })
+
+cmdargs17 <- getTestInput("prog.R abc")
+
+test_that("null parser works properly", {
+          expect_identical(parseSwitch(ArgParser(), cmdargs17),
+                           list(argv=list(`--help`=F), cmdargs_consumed=c("prog.R", "abc")))
+})
+

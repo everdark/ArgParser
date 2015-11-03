@@ -160,3 +160,9 @@ test_that("limited_to subset of flags works properly", {
                                 cmdargs_consumed=c("prog.R", "--flag3", "-f4", "o4", "--flag5", "v5")))
 })
 
+cmdargs27 <- getTestInput("prog.R abc")
+
+test_that("null parser works properly", {
+          expect_identical(parseFlag(ArgParser(), cmdargs27),
+                           list(argv=list(), cmdargs_consumed=c("prog.R", "abc")))
+})

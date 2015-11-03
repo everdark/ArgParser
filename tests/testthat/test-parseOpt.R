@@ -53,3 +53,10 @@ test_that("limited_to subset of opt works properly", {
                            list(argv=list(opt1='a', opt2=c('b', 'c')), cmdargs_consumed=c('d', 'e')))
 })
 
+cmdargs8 <- getTestInput("prog.R abc")
+
+test_that("null parser works properly", {
+          expect_identical(parseOpt(ArgParser(), cmdargs8),
+                           list(argv=list(), cmdargs_consumed=c("prog.R", "abc")))
+})
+
