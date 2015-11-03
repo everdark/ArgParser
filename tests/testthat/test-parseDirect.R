@@ -134,4 +134,42 @@ test_that("null parser works properly", {
                            list(argv=list(), cmdargs_consumed="prog.R"))
 })
 
+p7 <- ArgParser() %>% 
+    addDirect(c("start", "stop")) %>% 
+    addFlag("--f1", dir="start") %>%
+    addFlag("--f2", dir="stop") %>%
+    addFlag("--f3", dir=c("start", "stop"))
+
+cmdargs27 <- getTestInput("prog.R start --f1 v1")
+cmdargs28 <- getTestInput("prog.R start --f2 v2")
+cmdargs29 <- getTestInput("prog.R start --f3 v3")
+cmdargs30 <- getTestInput("prog.R stop --f1 v1")
+cmdargs31 <- getTestInput("prog.R stop --f2 v2")
+cmdargs32 <- getTestInput("prog.R stop --f3 v3")
+cmdargs33 <- getTestInput("prog.R start --f1 v1 --f2 v2 --f3 v3")
+
+test_that("directive set works properly", {
+          expect_identical(parseDirect(p7, cmdargs27),
+                           list(argv=list(start=list(`--f1`="v1")), cmdargs_consumed="prog.R"))
+          expect_identical(parseDirect(p7, cmdargs28),
+                           list(argv=list(start=list()), cmdargs_consumed=c("prog.R", "--f2", "v2")))
+          expect_identical(parseDirect(p7, cmdargs29),
+                           list(argv=list(start=list(`--f3`="v3")), cmdargs_consumed="prog.R"))
+          expect_identical(parseDirect(p7, cmdargs30),
+                           list(argv=list(stop=list()), cmdargs_consumed=c("prog.R", "--f1", "v1")))
+          expect_identical(parseDirect(p7, cmdargs31),
+                           list(argv=list(stop=list(`--f2`="v2")), cmdargs_consumed="prog.R"))
+          expect_identical(parseDirect(p7, cmdargs32),
+                           list(argv=list(stop=list(`--f3`="v3")), cmdargs_consumed="prog.R"))
+          expect_identical(parseDirect(p7, cmdargs33),
+                           list(argv=list(start=list(`--f1`="v1", `--f3`="v3")), cmdargs_consumed=c("prog.R", "--f2", "v2")))
+})
+
+cmdargs34 <- getTestInput("prog.R start stop")
+
+test_that("directives of the same group can not co-exist", {
+          expect_error(parseDirect(p7, cmdargs34))
+})
+
+
 
