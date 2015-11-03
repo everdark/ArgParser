@@ -223,3 +223,54 @@ test_that("all arguments work togetjer properly: duplicated flags/switches cause
           expect_error(parseCommandLine(argParser6, cmdargs42), "^.*duplicated.*")
 })
 
+#---------------------#
+# test for directives #
+#---------------------#
+
+argParser7 <- ArgParser() %>% 
+    addDirect(c("start", "stop", "none")) %>%
+    addFlag("--f1", dir="start") %>% 
+    addFlag("--f2", dir="stop") %>% 
+    addFlag("--f3") %>%
+    addSwitch("--s", dir=c("start", "stop")) %>%
+    addOpt("opt1", dir="start") %>%
+    addOpt("opt2")
+
+
+cmdargs43 <- getTestInput("prog.R --args none a")
+cmdargs44 <- getTestInput("prog.R --args none a --f1 v1")
+cmdargs45 <- getTestInput("prog.R --args none")
+cmdargs46 <- getTestInput("prog.R --args start a b")
+cmdargs47 <- getTestInput("prog.R --args start a --f1 v1 b")
+cmdargs48 <- getTestInput("prog.R --args start a --f1 v1 --s b")
+cmdargs49 <- getTestInput("prog.R --args a start b --f1 v1 --s c")
+cmdargs50 <- getTestInput("prog.R --args stop")
+cmdargs51 <- getTestInput("prog.R --args stop a")
+cmdargs52 <- getTestInput("prog.R --args stop --f2 v2 a")
+cmdargs53 <- getTestInput("prog.R --args stop --f3 v3 a")
+
+test_that("directive parsing works properly", {
+          expect_identical(parseCommandLine(argParser7, cmdargs43), 
+                           list(none=list(), `--help`=F, opt2='a'))
+          expect_identical(parseCommandLine(argParser7, cmdargs44), 
+                           list(none=list(), `--help`=F, opt2='a'))
+          expect_error(parseCommandLine(argParser7, cmdargs45)) 
+          expect_identical(parseCommandLine(argParser7, cmdargs46), 
+                           list(start=list(`--s`=F, opt1='a'), `--help`=F, opt2='b'))
+          expect_identical(parseCommandLine(argParser7, cmdargs47), 
+                           list(start=list(`--f1`="v1", `--s`=F, opt1='a'), `--help`=F, opt2='b'))
+          expect_identical(parseCommandLine(argParser7, cmdargs48), 
+                           list(start=list(`--f1`="v1", `--s`=T, opt1='a'), `--help`=F, opt2='b'))
+          expect_identical(parseCommandLine(argParser7, cmdargs49), 
+                           list(start=list(`--f1`="v1", `--s`=T, opt1='b'), `--help`=F, opt2='a'))
+          expect_error(parseCommandLine(argParser7, cmdargs50)) 
+          expect_identical(parseCommandLine(argParser7, cmdargs51), 
+                           list(stop=list(`--s`=F), `--help`=F, opt2='a'))
+          expect_identical(parseCommandLine(argParser7, cmdargs52), 
+                           list(stop=list(`--f2`="v2", `--s`=F), `--help`=F, opt2='a'))
+          expect_identical(parseCommandLine(argParser7, cmdargs53), 
+                           list(stop=list(`--s`=F), `--f3`="v3", `--help`=F, opt2='a'))
+})
+
+
+
