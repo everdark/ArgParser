@@ -112,12 +112,12 @@ p4 <- ArgParser() %>%
 
 cmdargs18 <- getTestInput("prog.R --flag1 v1")
 cmdargs19 <- getTestInput("prog.R --flag1 v1 --flag2")
-cmdargs19 <- getTestInput("prog.R --flag2 o2 --flag3")
-cmdargs20 <- getTestInput("prog.R -f3")
-cmdargs21 <- getTestInput("prog.R --flag1 v1 -f4 v4")
-cmdargs22 <- getTestInput("prog.R --flag1 v1 --flag2 -f4 v4")
-cmdargs23 <- getTestInput("prog.R --flag2 o2 --flag3 -f4 v4")
-cmdargs24 <- getTestInput("prog.R -f3 -f4 v4")
+cmdargs20 <- getTestInput("prog.R --flag2 o2 --flag3")
+cmdargs21 <- getTestInput("prog.R -f3")
+cmdargs22 <- getTestInput("prog.R --flag1 v1 -f4 v4")
+cmdargs23 <- getTestInput("prog.R --flag1 v1 --flag2 -f4 v4")
+cmdargs24 <- getTestInput("prog.R --flag2 o2 --flag3 -f4 v4")
+cmdargs25 <- getTestInput("prog.R -f3 -f4 v4")
 
 test_that("forced flags must be present; otherwise error is thrown", {
           expect_error(parseFlag(p4, cmdargs18))
@@ -136,10 +136,10 @@ p5 <- ArgParser() %>%
     addFlag("--flag4", "-f4", default="v4") %>%
     addFlag("--flag5")
 
-cmdargs25 <- getTestInput("prog.R --flag1 v1 -f2 v2 --flag3 -f4 o4 --flag5 v5")
+cmdargs26 <- getTestInput("prog.R --flag1 v1 -f2 v2 --flag3 -f4 o4 --flag5 v5")
 
 test_that("all components work together properly", {
-          expect_identical(parseFlag(p5, cmdargs25), 
+          expect_identical(parseFlag(p5, cmdargs26), 
                            list(argv=list(`--flag1`="v1",
                                           `--flag2`="v2",
                                           `--flag5`="v5",
@@ -149,13 +149,13 @@ test_that("all components work together properly", {
 })
 
 test_that("limited_to subset of flags works properly", {
-          expect_identical(parseFlag(p5, cmdargs25, limited_to=c("--flag1")), 
+          expect_identical(parseFlag(p5, cmdargs26, limited_to=c("--flag1")), 
                            list(argv=list(`--flag1`="v1"), 
                                 cmdargs_consumed=c("prog.R", "-f2", "v2", "--flag3", "-f4", "o4", "--flag5", "v5")))
-          expect_identical(parseFlag(p5, cmdargs25, limited_to=c("--flag1", "--flag2")), 
+          expect_identical(parseFlag(p5, cmdargs26, limited_to=c("--flag1", "--flag2")), 
                            list(argv=list(`--flag1`="v1", `--flag2`="v2"), 
                                 cmdargs_consumed=c("prog.R", "--flag3", "-f4", "o4", "--flag5", "v5")))
-          expect_identical(parseFlag(p5, cmdargs25, limited_to=c("--flag1", "--flag2", "--noflag")), 
+          expect_identical(parseFlag(p5, cmdargs26, limited_to=c("--flag1", "--flag2", "--noflag")), 
                            list(argv=list(`--flag1`="v1", `--flag2`="v2"), 
                                 cmdargs_consumed=c("prog.R", "--flag3", "-f4", "o4", "--flag5", "v5")))
 })
