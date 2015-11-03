@@ -34,12 +34,21 @@ setMethod("parseCommandLine", signature=c(x="ArgParser"),
               parsed <- list()
               all_argnames <- c(names(x@flags), names(x@switches_logic), names(x@switches_any))
 
+              ## parse directive and its sub-commands
+              parsed_directs <- parseDirect(x=x, cmdargs=cmdargs)
+              parsed <- c(parsed, parsed_directs$argv)
+
               ## parse flags
-              parsed_flags <- parseFlag(x=x, cmdargs=cmdargs)
+              sub_flags <- unlist(lapply(x@directs, function(x) x$flags))
+              primary_flags <- names(x@flags)[!names(x@flags) %in% sub_flags]
+              parsed_flags <- parseFlag(x=x, cmdargs=parsed_directs$cmdargs_consumed, limited=primary_flags)
               parsed <- c(parsed, parsed_flags$argv)
 
               ## parse switches
-              parsed_switches <- parseSwitch(x=x, cmdargs=parsed_flags$cmdargs_consumed)
+              sub_switches <- unlist(lapply(x@directs, function(x) x$switches))
+              all_switches <- c(names(x@switches_logic), names(x@switches_any))
+              primary_switches <- all_switches[!all_switches %in% sub_switches]
+              parsed_switches <- parseSwitch(x=x, cmdargs=parsed_flags$cmdargs_consumed, limited=primary_switches)
               parsed <- c(parsed, parsed_switches$argv)
 
               ## parse positional args (opt)
@@ -51,8 +60,10 @@ setMethod("parseCommandLine", signature=c(x="ArgParser"),
                   cmdargs_consumed <- parsed_switches$cmdargs_consumed
               }
               if ( !opt_supplied && length(x@opt) && any(x@opt_nrequired > 0) )
-                  stop("No positional argument found.")              
-              parsed_opt <- parseOpt(x=x, cmdargs_consumed=cmdargs_consumed)
+                  stop("No positional argument found.")
+              sub_opt <- unlist(lapply(x@directs, function(x) x$opt))
+              primary_opt <- x@opt[!x@opt %in% sub_opt]
+              parsed_opt <- parseOpt(x=x, cmdargs_consumed=cmdargs_consumed, limited=primary_opt)
               parsed <- c(parsed, parsed_opt$argv)
 
               if ( trim_prefix )
