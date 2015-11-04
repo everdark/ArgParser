@@ -45,20 +45,6 @@ setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
               ensembleArgHelp <- function(x, usage_line, help_parag=character(0)) {
 
                   all_alias <- c(x@flags_alias, x@switches_alias)
-                  s1tag <- sapply(logic_switches <- names(x@switches_logic), addBracket)
-                  if ( ns1 <- length(s1tag) ) {
-                      usage_line <- paste(usage_line, paste(s1tag, collapse=' '))
-                      help_parag <- c(help_parag, paste0("Logical switch", ifelse(ns1 > 1, "es:", ':')))
-                      for ( s in logic_switches )
-                          help_parag <- c(help_parag, getHelpString(s, x@help[s], all_alias))
-                  }
-                  s2tag <- sapply(adhoc_switches <- names(x@switches_any), addBracket)
-                  if ( ns2 <- length(s2tag) ) {
-                      usage_line <- paste(usage_line, paste(s2tag, collapse=' '))
-                      help_parag <- c(help_parag, paste0("Ad-hoc switch", ifelse(ns2 > 1, "es:", ':')))
-                      for ( s in adhoc_switches )
-                          help_parag <- c(help_parag, getHelpString(s, x@help[s], all_alias))
-                  }
                   f1tag <- forced_flags <- names(which(!x@flags_isOptional))
                   if ( nf1 <- length(f1tag) ) {
                       usage_line <- paste(usage_line, paste(f1tag, collapse=' '))
@@ -73,6 +59,21 @@ setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
                       for ( f in optional_flags )
                           help_parag <- c(help_parag, getHelpString(f, x@help[f], all_alias))
                   }
+                  s1tag <- sapply(logic_switches <- names(x@switches_logic), addBracket)
+                  if ( ns1 <- length(s1tag) ) {
+                      usage_line <- paste(usage_line, paste(s1tag, collapse=' '))
+                      help_parag <- c(help_parag, paste0("Logical switch", ifelse(ns1 > 1, "es:", ':')))
+                      for ( s in logic_switches )
+                          help_parag <- c(help_parag, getHelpString(s, x@help[s], all_alias))
+                  }
+                  s2tag <- sapply(adhoc_switches <- names(x@switches_any), addBracket)
+                  if ( ns2 <- length(s2tag) ) {
+                      usage_line <- paste(usage_line, paste(s2tag, collapse=' '))
+                      help_parag <- c(help_parag, paste0("Ad-hoc switch", ifelse(ns2 > 1, "es:", ':')))
+                      for ( s in adhoc_switches )
+                          help_parag <- c(help_parag, getHelpString(s, x@help[s], all_alias))
+                  }
+
                   if ( nopt <- length(x@opt) ) {
                       help_parag <- c(help_parag, paste0("Positional argument", ifelse(nopt > 1, "s:", ':')))
                       for ( opt in x@opt ) {
