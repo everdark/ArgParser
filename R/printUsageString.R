@@ -3,6 +3,7 @@ setGeneric("printUsageString", def=function(x, cmdargs, ...) standardGeneric("pr
 
 setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
           definition=function(x, cmdargs, align=TRUE) {
+
               # define helper func
               getHelpString <- function(argname, h, all_alias) {
                   if ( !is.na(short <- all_alias[argname]) ) {
@@ -23,18 +24,21 @@ setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
 
               ensembleDirHelp <- function(x, usage_line, help_parag=character(0)) {
 
-                  all_alias <- c(x@flags_alias, x@switches_alias)
-                  direct_ustring <- "DIRECTIVE"
-                  if ( x@directs_group[[1]]$is_optional ) 
-                      direct_ustring <- addBracket(direct_ustring)
-                  usage_line <- paste(usage_line, paste(direct_ustring, collapse=' '))
+                  if ( length(x@directs) ) {
+                      all_alias <- c(x@flags_alias, x@switches_alias)
+                      direct_ustring <- "DIRECTIVE"
+                      if ( x@directs_group[[1]]$is_optional ) 
+                          direct_ustring <- addBracket(direct_ustring)
+                      usage_line <- paste(usage_line, paste(direct_ustring, collapse=' '))
 
-                  nd <- length(x@directs)
-                  help_parag <- c(help_parag, paste0("Directive", ifelse(nd > 1, "s:", ':')))
-                  for ( d in names(x@directs) ) 
-                      help_parag <- c(help_parag, getHelpString(d, x@help[d], all_alias))
+                      nd <- length(x@directs)
+                      help_parag <- c(help_parag, paste0("Directive", ifelse(nd > 1, "s:", ':')))
+                      for ( d in names(x@directs) ) 
+                          help_parag <- c(help_parag, getHelpString(d, x@help[d], all_alias))
+                      help_parag <- c(help_parag, '')
+                  }
 
-                  list(hp=c(help_parag, ''),
+                  list(hp=help_parag,
                        ul=usage_line)
               }
 
@@ -83,6 +87,17 @@ setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
                   }
                   list(hp=help_parag, 
                        ul=usage_line)
+              }
+
+              # collect all sub-commands, if any
+              if ( length(x@directs) ) {
+                  dflags <- x@directs[[1]]$flags
+
+                  dswitches <- x@directs[[1]]$switches
+                  dopt <- x@directs[[1]]$opt
+                  dargs <- c(dflags, dswitches, dopt)
+              } else {
+                  dargs <- character(0)
               }
 
               # get script name
