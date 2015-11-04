@@ -73,7 +73,6 @@ setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
                       for ( s in adhoc_switches )
                           help_parag <- c(help_parag, getHelpString(s, x@help[s], all_alias))
                   }
-
                   if ( nopt <- length(x@opt) ) {
                       help_parag <- c(help_parag, paste0("Positional argument", ifelse(nopt > 1, "s:", ':')))
                       for ( opt in x@opt ) {
