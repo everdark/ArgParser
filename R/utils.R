@@ -88,6 +88,17 @@
 
 # setup the usage string line
 .getUsageLine <- function(p) {
+
+    usage_line <- character(0)
+    addBracket <- function(s) sprintf("[%s]", s)
+
+    if ( length(forced_flags <- names(which(!p@flags_isOptional))) )
+        usage_line <- c(usage_line, forced_flags)
+    if ( length(optional_flags <- names(which(p@flags_isOptional))) )
+        usage_line <- c(usage_line, addBracket(optional_flags))
+    if ( length(switches <- c(names(p@switches_logic), names(p@switches_any))) )
+        usage_line <- c(usage_line, addBracket(switches))
+    paste(usage_line, collapse=' ')
 }
 
 
