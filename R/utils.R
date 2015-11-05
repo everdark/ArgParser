@@ -19,7 +19,7 @@
 }
 
 # setup argument help message string for a given ArgParser
-.getHelpParag <- function(p, hide.na=FALSE, categorize=FALSE) {
+.getHelpParag <- function(p, hide.na=FALSE) {
     all_alias <- c(p@flags_alias, p@switches_alias)
     help_headers <- sapply(c(names(p@directs), 
                              names(p@flags),
@@ -35,15 +35,34 @@
 
     len_before_tab <- nchar(help_headers)
     len_fill <- max(len_before_tab) - len_before_tab + 4
+    blanks <- 
+        if ( length(len_fill) == 1 ) {
+            paste(rep(' ', len_fill), collapse='')
+        } else {
+            sapply(mapply(rep, times=len_fill, MoreArgs=list(x=' ')), paste, collapse='')
+        }
     help_parag <- paste(help_headers, 
-                        sapply(mapply(rep, times=len_fill, MoreArgs=list(x=' ')), paste, collapse=''), 
+                        blanks, 
                         p@help[names(help_headers)])
+
+    setNames(help_parag, names(help_headers))
+}
+
+# format help paragraph
+.formatHelpParag <- function(p, help_parag, categorize=TRUE) {
+    if ( categorize ) {
+        flags_parag <- help_parag[names(help_parag) %in% names(p@flags)]
+        lswitches_parag <- help_parag[names(help_parag) %in% names(p@switches_logic)]
+        aswitches_parag <- help_parag[names(help_parag) %in% names(p@switches_any)]
+        opt_parag <- help_parag[names(help_parag %in% p@opt)]
+        
+    }
 
     help_parag
 }
 
 # setup the usage string line
-.getUsageLine <- function() {
+.getUsageLine <- function(p) {
 }
 
 # ensemble help message for directives
