@@ -18,20 +18,31 @@
                      paste(arg_raised[is_dup])))
 }
 
-# setup help message for a given argument
-.getHelpMesg <- function(argname, h, all_alias) {
-    if ( !is.na(short <- all_alias[argname]) ) {
-        out <- sprintf("  %s, %s\t%s", short, argname, h)
-    } else {
-        out <- sprintf("  %s\t%s", argname, h)
-    }
-    if ( align ) {
-        all_alias_defined <- all_alias[!is.na(all_alias)]
-        max_len <- max(nchar(all_alias_defined) + nchar(names(all_alias_defined))) + 4
-        tag_len <- ifelse(is.na(short), -2, nchar(short)) + nchar(argname) + 2
-        out <- gsub("\t", paste(rep(' ', max_len - tag_len), collapse=''), out)
-    }
-    out
+# setup argument help message string for a given ArgParser
+.getHelpMesg <- function(p, hide.na=FALSE, categorize=FALSE) {
+    all_alias <- c(p@flags_alias, p@switches_alias)
+    help_headers <- sapply(c(names(p@directs), 
+                             names(p@flags),
+                             names(p@switches_logic),
+                             names(p@switches_any),
+                             p@opt), 
+                           function(x) 
+                               sprintf("%s%s", ifelse(is.na(s <- all_alias[x]), 
+                                                      '', paste0(s, ", ")), x))
+
+    if ( hide.na )
+        help_headers <- help_headers[names(help_headers) %in% names(p@help)]
+
+    len_before_tab <- nchar(help_headers)
+    len_fill <- max(len_before_tab) - len_before_tab + 4
+    help_parag <- paste(help_headers, 
+                        sapply(mapply(rep, times=len_fill, MoreArgs=list(x=' ')), paste, collapse=''), 
+                        p@help[names(help_headers)])
+    help_parag
+}
+
+# setup the usage string line
+.getUsageLine <- function() {
 }
 
 # ensemble help message for directives
