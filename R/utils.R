@@ -19,7 +19,7 @@
 }
 
 # setup argument help message string for a given ArgParser
-.getHelpMesg <- function(p, hide.na=FALSE, categorize=FALSE) {
+.getHelpParag <- function(p, hide.na=FALSE, categorize=FALSE) {
     all_alias <- c(p@flags_alias, p@switches_alias)
     help_headers <- sapply(c(names(p@directs), 
                              names(p@flags),
@@ -38,6 +38,7 @@
     help_parag <- paste(help_headers, 
                         sapply(mapply(rep, times=len_fill, MoreArgs=list(x=' ')), paste, collapse=''), 
                         p@help[names(help_headers)])
+
     help_parag
 }
 
