@@ -90,9 +90,9 @@ setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
               }
 
               # collect all sub-commands, if any
+              y <- x
               if ( length(x@directs) ) {
                   dflags <- x@directs[[1]]$flags
-
                   dswitches <- x@directs[[1]]$switches
                   dopt <- x@directs[[1]]$opt
                   dargs <- c(dflags, dswitches, dopt)
