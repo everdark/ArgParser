@@ -90,22 +90,4 @@
 .getUsageLine <- function(p) {
 }
 
-# ensemble help message for directives
-.ensembleDirHelpMesg <- function(p, usage_line=character(0), help_parag=character(0)) {
-  if ( length(p@directs) ) {
-      all_alias <- c(x@flags_alias, x@switches_alias)
-      direct_ustring <- "DIRECTIVE"
-      if ( x@directs_group[[1]]$is_optional )
-          direct_ustring <- addBracket(direct_ustring)
-      usage_line <- paste(usage_line, paste(direct_ustring, collapse=' '))
 
-      nd <- length(x@directs)
-      help_parag <- c(help_parag, paste0("Directive", ifelse(nd > 1, "s:", ':')))
-      for ( d in names(x@directs) )
-          help_parag <- c(help_parag, getHelpString(d, x@help[d], all_alias))
-      help_parag <- c(help_parag, '')
-  }
-
-  list(hp=help_parag,
-       ul=usage_line)
-}
