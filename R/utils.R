@@ -50,15 +50,40 @@
 
 # format help paragraph
 .formatHelpParag <- function(p, help_parag, categorize=TRUE) {
+
+    formatted_parag <- character(0)
+
     if ( categorize ) {
+        directs_parag <- help_parag[names(help_parag) %in% names(p@directs)]
         flags_parag <- help_parag[names(help_parag) %in% names(p@flags)]
         lswitches_parag <- help_parag[names(help_parag) %in% names(p@switches_logic)]
         aswitches_parag <- help_parag[names(help_parag) %in% names(p@switches_any)]
         opt_parag <- help_parag[names(help_parag %in% p@opt)]
-        
+
+        if ( nd <- length(directs_parag) ) {
+            formatted_parag <- c(formatted_parag, paste0("Directive", ifelse(nd > 1, "s:", ':')))
+            formatted_parag <- c(formatted_parag, paste("  ", directs_parag))
+            formatted_parag <- c(formatted_parag, '') # one-line gap between directives and all the other arguments
+        }
+        if ( nf <- length(flags_parag) ) {
+            formatted_parag <- c(formatted_parag, paste0("Flag argument", ifelse(nf > 1, "s:", ':')))
+            formatted_parag <- c(formatted_parag, paste("  ", flags_parag))
+        }
+        if ( nls <- length(lswitches_parag) ) {
+            formatted_parag <- c(formatted_parag, paste0("Logical Switch argument", ifelse(nls > 1, "s:", ':')))
+            formatted_parag <- c(formatted_parag, paste("  ", lswitches_parag))
+        }
+        if ( nas <- length(aswitches_parag) ) {
+            formatted_parag <- c(formatted_parag, paste0("Ad-hoc Switch argument", ifelse(nas > 1, "s:", ':')))
+            formatted_parag <- c(formatted_parag, paste("  ", aswitches_parag))
+        }
+        if ( nopt <- length(opt_parag) ) {
+            formatted_parag <- c(formatted_parag, paste0("Positional argument", ifelse(nopt > 1, "s:", ':')))
+            formatted_parag <- c(formatted_parag, paste("  ", opt_parag))
+        }
     }
 
-    help_parag
+    formatted_parag
 }
 
 # setup the usage string line
