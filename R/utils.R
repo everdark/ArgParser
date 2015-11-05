@@ -2,6 +2,8 @@
 
 # check length of an argument and return its valid truncated
 .checkArgLen <- function(arg, maxlen) {
+    if ( maxlen < 1 )
+        stop("Condition maxlen >= 1 must hold.")
     if ( length(arg) > maxlen ) 
         warning(sprintf("Argument %s has length > %s; only the first %s respected.", 
                         as.character(substitute(arg)), maxlen, maxlen))
