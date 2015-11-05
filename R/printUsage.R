@@ -1,8 +1,8 @@
 
-setGeneric("printUsageString", def=function(x, cmdargs, ...) standardGeneric("printUsageString"))
+setGeneric("printUsage", def=function(x, cmdargs, ...) standardGeneric("printUsage"))
 
-setMethod("printUsageString", signature=c(x="ArgParser", cmdargs="character"),
-          definition=function(x, cmdargs, align=TRUE) {
+setMethod("printUsage", signature=c(x="ArgParser"),
+          definition=function(x) {
 
               # define helper func
               getHelpString <- function(argname, h, all_alias) {

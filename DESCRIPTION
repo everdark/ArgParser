@@ -25,5 +25,5 @@ Collate:
     'parseFlag.R'
     'parseOpt.R'
     'parseSwitch.R'
-    'printUsageString.R'
+    'printUsage.R'
     'utils.R'

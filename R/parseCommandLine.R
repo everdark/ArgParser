@@ -27,7 +27,7 @@ setMethod("parseCommandLine", signature=c(x="ArgParser"),
 
               ## print usage then exit if --help is raised
               if ( any(c("--help", "-h") %in% cmdargs) ) {
-                  printUsageString(x, cmdargs)
+                  printUsage(x)
                   quit(status=0)
               }
               
