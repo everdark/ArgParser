@@ -27,3 +27,4 @@ Collate:
     'parseSwitch.R'
     'printUsage.R'
     'utils.R'
+RoxygenNote: 6.0.1

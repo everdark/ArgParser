@@ -3,7 +3,7 @@
 
 context("Add flags onto ArgParser instance")
 
-test_that("name definition of length > 1 will be warnedm and the first one kept", {
+test_that("name definition of length > 1 will be warned and the first one kept", {
           expect_warning(ArgParser() %>% addFlag(c("--f1", "--f2")))
           expect_identical((ArgParser() %>% addFlag(c("--f1", "--f2")))@flags,
                            list(`--f1`=NA))
